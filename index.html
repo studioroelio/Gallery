@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>My Art Gallery</title>
+<style>
+  body {
+    margin: 0;
+    background: #f5f5f0;
+    font-family: sans-serif;
+    overflow: hidden;
+  }
+  .gallery {
+    display: flex;
+    gap: 60px;
+    padding: 80px;
+    height: 100vh;
+    align-items: flex-start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    cursor: grab;
+  }
+  .gallery.dragging {
+    cursor: grabbing;
+  }
+  .painting {
+    flex: 0 0 auto;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .painting img {
+    display: block;
+    height: auto;
+    max-height: 60vh;
+    border: 8px solid white;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  }
+  .painting:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 30px rgba(0,0,0,0.3);
+  }
+  .lightbox {
+    display: none;
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background: rgba(0,0,0,0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
+  .lightbox img {
+    max-width: 90%;
+    max-height: 90%;
+    border: 8px solid white;
+    box-shadow: 0 6px 30px rgba(0,0,0,0.5);
+  }
+  .lightbox:target {
+    display: flex;
+  }
+</style>
+</head>
+<body>
+
+<div class="gallery" id="gallery">
+  <div class="painting" style="margin-top: 30px;">
+    <a href="#img1"><img src="images/painting1.jpg" alt="Painting 1" /></a>
+  </div>
+  <div class="painting" style="margin-top: 80px;">
+    <a href="#img2"><img src="images/painting2.jpg" alt="Painting 2" /></a>
+  </div>
+  <div class="painting" style="margin-top: 50px;">
+    <a href="#img3"><img src="images/painting3.jpg" alt="Painting 3" /></a>
+  </div>
+  <div class="painting" style="margin-top: 100px;">
+    <a href="#img4"><img src="images/painting4.jpg" alt="Painting 4" /></a>
+  </div>
+</div>
+
+<div id="img1" class="lightbox" onclick="location.href='#'">
+  <img src="images/painting1.jpg" alt="Painting 1" />
+</div>
+<div id="img2" class="lightbox" onclick="location.href='#'">
+  <img src="images/painting2.jpg" alt="Painting 2" />
+</div>
+<div id="img3" class="lightbox" onclick="location.href='#'">
+  <img src="images/painting3.jpg" alt="Painting 3" />
+</div>
+<div id="img4" class="lightbox" onclick="location.href='#'">
+  <img src="images/painting4.jpg" alt="Painting 4" />
+</div>
+
+<script>
+  const gallery = document.getElementById('gallery');
+  let isDown = false;
+  let startX;
+  let scrollLeft;
+
+  gallery.addEventListener('mousedown', (e) => {
+    isDown = true;
+    gallery.classList.add('dragging');
+    startX = e.pageX - gallery.offsetLeft;
+    scrollLeft = gallery.scrollLeft;
+  });
+
+  gallery.addEventListener('mouseleave', () => {
+    isDown = false;
+    gallery.classList.remove('dragging');
+  });
+
+  gallery.addEventListener('mouseup', () => {
+    isDown = false;
+    gallery.classList.remove('dragging');
+  });
+
+  gallery.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - gallery.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    gallery.scrollLeft = scrollLeft - walk;
+  });
+
+  gallery.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    gallery.scrollLeft += e.deltaY;
+  }, { passive: false });
+</script>
+
+</body>
+</html>
