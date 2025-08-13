@@ -14,11 +14,12 @@ body {
 .gallery {
   display: flex;
   align-items: center;
-  height: 100vh;
+  height: 90vh;
   gap: 40px;
   cursor: grab;
   position: relative;
   padding-left: 40px; /* space from very left wall */
+  padding-right: 40px;
 }
 
 
