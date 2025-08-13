@@ -44,7 +44,7 @@ body {
 }
 
 .gallery img:nth-child(4) {
-  transform: translateY(-5%);
+  transform: translateY(-5vh);
 }
 
 /* Enlarged modal view */
