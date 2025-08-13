@@ -18,10 +18,18 @@ body {
   gap: 40px;
   cursor: grab;
   position: relative;
-  padding-left: 40px; /* space from very left wall */
+  padding-left: 40px;
   padding-right: 40px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
 }
 
+.gallery img {
+  /* keep your existing styles AND add this so they fill vertical space */
+  max-height: 60vh;
+}
 
 .gallery:active {
   cursor: grabbing;
