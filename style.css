@@ -27,13 +27,6 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
-/*
-.gallery img {
-  /* keep your existing styles AND add this so they fill vertical space */
-  max-height: 60vh;
-}
-*/
-
 .gallery:active {
   cursor: grabbing;
 }
