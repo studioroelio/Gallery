@@ -15,7 +15,7 @@ body {
   display: flex;
   align-items: center;
   height: 100vh;
-  padding-left: 250px; /* space for intro box */
+  padding-left: 400px; /* space for intro box */
   gap: 40px;
   cursor: grab;
   overflow-x: auto;
