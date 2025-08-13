@@ -18,7 +18,7 @@ body {
   gap: 40px;
   cursor: grab;
   position: relative;
-  padding-left: 400px; /* space for intro text */
+  padding-left: 300px; /* space for intro text */
 }
 
 
@@ -84,17 +84,18 @@ body {
 
 /* Intro/contact box on left side */
 .intro-box {
-  position: fixed;
+  position: absolute;
   top: 50%;
   left: 20px;
   transform: translateY(-50%);
-  width: 300px;
-  font-size: 18px;
+  width: 200px;
+  font-size: 14px;
   line-height: 1.5;
-  background-color: rgba(255, 255, 255, 0);
+  background-color: rgba(255, 255, 255, 0.8);
   padding: 10px;
-  z-index: 1500;
+  z-index: 1;
 }
+
 /* Intro/ Blue colour highlight*/
 .highlight {
   color: rgba(0,0,255);
