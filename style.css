@@ -14,7 +14,7 @@ body {
 .gallery {
   display: flex;
   align-items: center;
-  height: 90vh;
+  height: 100vh;
   gap: 40px;
   cursor: grab;
   position: relative;
