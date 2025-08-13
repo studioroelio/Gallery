@@ -95,6 +95,11 @@ body {
   padding: 10px;
   z-index: 1500;
 }
+/* Intro/ Blue colour highlight*/
+.highlight {
+  color: rgba(0,0,255);
+  font-weight: bold; /* optional */
+}
 
 .contact-icons {
   margin-top: 10px;
