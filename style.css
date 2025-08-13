@@ -39,6 +39,14 @@ body {
   transition: transform 0.3s ease;
 }
 
+.gallery img:nth-child(2) {
+  transform: translateY(-15%);
+}
+
+.gallery img:nth-child(4) {
+  transform: translateY(-5%);
+}
+
 .gallery img:hover {
   transform: scale(1.05);
 }
