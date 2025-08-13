@@ -46,8 +46,8 @@ body {
   z-index: 2000;
   left: 0;
   top: 0;
-  width: 100%;
-  height: 100%;
+  width: 90%;
+  height: 90%;
   background-color: rgba(0,0,0,0.8);
 }
 
@@ -80,13 +80,13 @@ body {
 }
 
 .logo img {
-  height: 60px; /* adjust size */
+  height: 80px; /* adjust size */
 }
 
 /* Intro/contact box on left side */
 .intro-box {
   flex: 0 0 200px; /* fixed width column */
-  font-size: 14px;
+  font-size: 11px;
   line-height: 1.5;
   background-color: rgba(255, 255, 255, 0.8);
   padding: 10px;
