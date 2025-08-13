@@ -15,12 +15,12 @@ body {
   display: flex;
   align-items: center;
   height: 100vh;
-  padding-left: 400px; /* space for intro box */
   gap: 40px;
   cursor: grab;
-  overflow-x: auto;
-  scroll-behavior: smooth;
+  position: relative;
+  padding-left: 400px; /* space for intro text */
 }
+
 
 .gallery:active {
   cursor: grabbing;
