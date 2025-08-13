@@ -20,7 +20,7 @@ body {
   position: relative;
   padding-left: 40px;
   padding-right: 40px;
-  padding-top: 5vh;
+  padding-bottom: 10vh;
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
