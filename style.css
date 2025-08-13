@@ -40,7 +40,7 @@ body {
 }
 
 .gallery img:nth-child(3) {
-  transform: translateY(20%);
+  transform: translateY(-5%);
 }
 
 .gallery img:nth-child(4) {
@@ -88,7 +88,7 @@ body {
 }
 
 .logo img {
-  height: 40px; /* adjust size */
+  height: 50px; /* adjust size */
 }
 
 /* Intro/contact box on left side */
