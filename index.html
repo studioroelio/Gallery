@@ -1,135 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>My Art Gallery</title>
-<style>
-  body {
-    margin: 0;
-    background: #f5f5f0;
-    font-family: sans-serif;
-    overflow: hidden;
-  }
-  .gallery {
-    display: flex;
-    gap: 60px;
-    padding: 40px;
-    height: 80vh;
-    align-items: flex-start;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-behavior: smooth;
-    cursor: grab;
-  }
-  .gallery.dragging {
-    cursor: grabbing;
-  }
-  .painting {
-    flex: 0 0 auto;
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  .painting img {
-    display: block;
-    height: auto;
-    max-height: 60vh;
-    border: 0px solid white;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-  }
-  .painting:hover {
-    transform: scale(1.2);
-    box-shadow: 0 6px 30px rgba(0,0,0,0.3);
-  }
-  .lightbox {
-    display: none;
-    position: fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background: rgba(0,0,0,0.8);
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-  }
-  .lightbox img {
-    max-width: 90%;
-    max-height: 90%;
-    border: 2px solid white;
-    box-shadow: 0 6px 30px rgba(0,0,0,0.5);
-  }
-  .lightbox:target {
-    display: flex;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Roelio</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="gallery" id="gallery">
-  <div class="painting" style="margin-top: 30px;">
-    <a href="#img1"><img src="images/painting1.jpg" alt="Painting 1" /></a>
-  </div>
-  <div class="painting" style="margin-top: 40px;">
-    <a href="#img2"><img src="images/painting2.jpg" alt="Painting 2" /></a>
-  </div>
-  <div class="painting" style="margin-top: 50px;">
-    <a href="#img3"><img src="images/painting3.jpg" alt="Painting 3" /></a>
-  </div>
-  <div class="painting" style="margin-top: 40px;">
-    <a href="#img4"><img src="images/painting4.jpg" alt="Painting 4" /></a>
-  </div>
-
+<!-- Logo -->
+<div class="logo">
+    <img src="images/logo.png" alt="Studio Roelio Logo">
 </div>
 
-<div id="img1" class="lightbox" onclick="location.href='#'">
-  <img src="images/painting1.jpg" alt="Painting 1" />
+<!-- Intro Box -->
+<div class="intro-box">
+    <p>Studioroelio is the creative outlet of Roel Schiffers.<br>
+    Please reach out!</p>
+    <div class="contact-icons">
+        <a href="mailto:studioroelio@hotmail.com" title="Email">📧</a>
+        <a href="https://instagram.com/studioroelio" target="_blank" title="Instagram">📷</a>
+    </div>
 </div>
-<div id="img2" class="lightbox" onclick="location.href='#'">
-  <img src="images/painting2.jpg" alt="Painting 2" />
+
+<!-- Gallery -->
+<div class="gallery">
+    <img src="images/painting1.jpg" data-width="12" data-height="18" alt="Painting 1">
+    <img src="images/painting2.jpg" data-width="80" data-height="100" alt="Painting 2">
+    <img src="images/painting3.jpg" data-width="50" data-height="50" alt="Painting 3">
+    <img src="images/painting4.jpg" data-width="40" data-height="70" alt="Painting 4">
 </div>
-<div id="img3" class="lightbox" onclick="location.href='#'">
-  <img src="images/painting3.jpg" alt="Painting 3" />
+
+<!-- Modal for enlarged view -->
+<div class="modal" id="modal">
+    <span class="modal-close" id="modal-close">&times;</span>
+    <img id="modal-img" src="" alt="Enlarged Painting">
 </div>
-<div id="img4" class="lightbox" onclick="location.href='#'">
-  <img src="images/painting4.jpg" alt="Painting 4" />
-</div>
-  
+
 <script>
-  const gallery = document.getElementById('gallery');
-  let isDown = false;
-  let startX;
-  let scrollLeft;
+// ====== Drag to Scroll ======
+const gallery = document.querySelector('.gallery');
+let isDown = false;
+let startX;
+let scrollLeft;
 
-  gallery.addEventListener('mousedown', (e) => {
+gallery.addEventListener('mousedown', (e) => {
     isDown = true;
-    gallery.classList.add('dragging');
+    gallery.classList.add('active');
     startX = e.pageX - gallery.offsetLeft;
     scrollLeft = gallery.scrollLeft;
-  });
+});
 
-  gallery.addEventListener('mouseleave', () => {
+gallery.addEventListener('mouseleave', () => {
     isDown = false;
-    gallery.classList.remove('dragging');
-  });
+});
 
-  gallery.addEventListener('mouseup', () => {
+gallery.addEventListener('mouseup', () => {
     isDown = false;
-    gallery.classList.remove('dragging');
-  });
+});
 
-  gallery.addEventListener('mousemove', (e) => {
+gallery.addEventListener('mousemove', (e) => {
     if (!isDown) return;
     e.preventDefault();
     const x = e.pageX - gallery.offsetLeft;
-    const walk = (x - startX) * 1.5;
+    const walk = (x - startX) * 2; // scroll speed
     gallery.scrollLeft = scrollLeft - walk;
-  });
+});
 
-  gallery.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    gallery.scrollLeft += e.deltaY;
-  }, { passive: false });
+// ====== Image Modal ======
+const modal = document.getElementById('modal');
+const modalImg = document.getElementById('modal-img');
+const modalClose = document.getElementById('modal-close');
+
+document.querySelectorAll('.gallery img').forEach(img => {
+    img.addEventListener('click', () => {
+        modal.style.display = 'block';
+        modalImg.src = img.src;
+    });
+});
+
+modalClose.addEventListener('click', () => {
+    modal.style.display = 'none';
+});
+
+// ====== True-to-Size Scaling ======
+document.addEventListener("DOMContentLoaded", () => {
+    const paintings = document.querySelectorAll(".gallery img");
+    let maxWidth = 0;
+    paintings.forEach(img => {
+        const w = parseFloat(img.dataset.width);
+        if (w > maxWidth) maxWidth = w;
+    });
+    paintings.forEach(img => {
+        const realWidth = parseFloat(img.dataset.width);
+        const scale = realWidth / maxWidth;
+        img.style.width = `${scale * 400}px`; // largest painting = 400px wide
+    });
+});
 </script>
 
 </body>
