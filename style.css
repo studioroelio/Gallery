@@ -40,7 +40,7 @@ body {
 }
 
 .gallery img:nth-child(3) {
-  transform: translateY(10%);
+  transform: translateY(-10vh);
 }
 
 .gallery img:nth-child(4) {
