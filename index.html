@@ -41,104 +41,108 @@
 </div>
 
 <script>
-function scalePaintings() {
-  const paintings = document.querySelectorAll(".gallery img");
-  let maxWidth = 0;
+document.addEventListener('DOMContentLoaded', () => {
 
-  paintings.forEach(img => {
-    const w = parseFloat(img.dataset.width);
-    if (!isNaN(w) && w > maxWidth) maxWidth = w;
-  });
+    /* ====== Scale Paintings ====== */
+    function scalePaintings() {
+        const paintings = document.querySelectorAll(".gallery img");
+        let maxWidth = 0;
 
-  const LARGEST_DISPLAY_WIDTH = 400; // px for the biggest painting
+        paintings.forEach(img => {
+            const w = parseFloat(img.dataset.width);
+            if (!isNaN(w) && w > maxWidth) maxWidth = w;
+        });
 
-  if (maxWidth <= 0) {
-    paintings.forEach(img => img.style.width = LARGEST_DISPLAY_WIDTH + 'px');
-    return;
-  }
+        const LARGEST_DISPLAY_WIDTH = 400; // px for the biggest painting
 
-  paintings.forEach(img => {
-    const realWidth = parseFloat(img.dataset.width);
-    const scale = (!isNaN(realWidth) ? realWidth : maxWidth) / maxWidth;
-    img.style.width = (scale * LARGEST_DISPLAY_WIDTH) + 'px';
-  });
-}
+        if (maxWidth <= 0) {
+            paintings.forEach(img => img.style.width = LARGEST_DISPLAY_WIDTH + 'px');
+            return;
+        }
 
-// Run now (script is at end of body), and again on full load just in case
-scalePaintings();
-window.addEventListener('load', scalePaintings);
+        paintings.forEach(img => {
+            const realWidth = parseFloat(img.dataset.width);
+            const scale = (!isNaN(realWidth) ? realWidth : maxWidth) / maxWidth;
+            img.style.width = (scale * LARGEST_DISPLAY_WIDTH) + 'px';
+        });
+    }
+    scalePaintings();
+    window.addEventListener('load', scalePaintings);
 
-/* ====== Hover Info Box ====== */
-const hoverInfo = document.getElementById('hover-info');
 
-document.querySelectorAll('.gallery img').forEach(img => {
-    const width = img.dataset.width;
-    const height = img.dataset.height;
-    const desc = img.alt || "Untitled";
+    /* ====== Hover Info Box ====== */
+    const hoverInfo = document.getElementById('hover-info');
+    document.querySelectorAll('.gallery img').forEach(img => {
+        const width = img.dataset.width;
+        const height = img.dataset.height;
+        const desc = img.alt || "Untitled";
 
-    img.addEventListener('mouseenter', () => {
-        hoverInfo.textContent = `${desc} – ${width}cm × ${height}cm`;
-        hoverInfo.style.display = 'block';
+        img.addEventListener('mouseenter', () => {
+            hoverInfo.textContent = `${desc} – ${width}cm × ${height}cm`;
+            hoverInfo.style.display = 'block';
+        });
+
+        img.addEventListener('mouseleave', () => {
+            hoverInfo.style.display = 'none';
+        });
     });
 
-    img.addEventListener('mouseleave', () => {
-        hoverInfo.style.display = 'none';
+
+    /* ====== Drag to Scroll ====== */
+    const gallery = document.querySelector('.gallery');
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    gallery.addEventListener('wheel', (e) => {
+        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+            e.preventDefault();
+            gallery.scrollLeft += e.deltaY;
+        }
+    }, { passive: false });
+
+    gallery.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startX = e.pageX - gallery.offsetLeft;
+        scrollLeft = gallery.scrollLeft;
     });
-});
-    
-// ====== Drag to Scroll ======
-const gallery = document.querySelector('.gallery');
-let isDown = false;
-let startX;
-let scrollLeft;
 
-gallery.addEventListener('wheel', (e) => {
-  if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-    e.preventDefault();
-    gallery.scrollLeft += e.deltaY;
-  }
-}, { passive: false });
-    
-gallery.addEventListener('mousedown', (e) => {
-    isDown = true;
-    gallery.classList.add('active');
-    startX = e.pageX - gallery.offsetLeft;
-    scrollLeft = gallery.scrollLeft;
-});
-
-gallery.addEventListener('mouseleave', () => {
-    isDown = false;
-});
-
-gallery.addEventListener('mouseup', () => {
-    isDown = false;
-});
-
-gallery.addEventListener('mousemove', (e) => {
-    if (!isDown) return;
-    e.preventDefault();
-    const x = e.pageX - gallery.offsetLeft;
-    const walk = (x - startX) * 2; // scroll speed
-    gallery.scrollLeft = scrollLeft - walk;
-});
-
-// ====== Image Modal ======
-const modal = document.getElementById('modal');
-const modalImg = document.getElementById('modal-img');
-const modalClose = document.getElementById('modal-close');
-
-document.querySelectorAll('.gallery img').forEach(img => {
-    img.addEventListener('click', () => {
-        modal.style.display = 'block';
-        modalImg.src = img.src;
+    gallery.addEventListener('mouseleave', () => {
+        isDown = false;
     });
-});
 
-modalClose.addEventListener('click', () => {
-    modal.style.display = 'none';
-});
+    gallery.addEventListener('mouseup', () => {
+        isDown = false;
+    });
 
+    gallery.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - gallery.offsetLeft;
+        const walk = (x - startX) * 2; // scroll speed
+        gallery.scrollLeft = scrollLeft - walk;
+    });
+
+
+    /* ====== Image Modal ====== */
+    const modal = document.getElementById('modal');
+    const modalImg = document.getElementById('modal-img');
+    const modalClose = document.getElementById('modal-close');
+
+    document.querySelectorAll('.gallery img').forEach(img => {
+        img.addEventListener('click', () => {
+            modal.style.display = 'block';
+            modalImg.src = img.src;
+        });
+    });
+
+    modalClose.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+});
 </script>
+
 
 <!-- Hover Info Box -->
 <div class="hover-info" id="hover-info"></div>    
