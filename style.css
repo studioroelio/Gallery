@@ -20,7 +20,7 @@ body {
   position: relative;
   padding-left: 40px;
   padding-right: 40px;
-  padding-bottom: 10vh;
+  padding-bottom: 15vh;
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
@@ -40,11 +40,15 @@ body {
 }
 
 .gallery img:nth-child(3) {
-  transform: translateY(-10vh);
+  transform: translateY(-14vh);
 }
 
 .gallery img:nth-child(4) {
   transform: translateY(-5vh);
+}
+
+.gallery img:nth-child(5) {
+  transform: translateY(-9vh);
 }
 
 /* Enlarged modal view */
@@ -94,7 +98,7 @@ body {
 /* Intro/contact box on left side */
 .intro-box {
   flex: 0 0 100px; /* fixed width column */
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.5;
   background-color: rgba(255, 255, 255, 0.0);
   padding: 10px;
