@@ -128,7 +128,7 @@ body {
   background-color: rgba(0, 0, 255, 1.0);
   padding: 8px 14px;
   font-size: 12px;
-  text-color: rgba(255, 255, 255, 1.0);
+  color: rgba(255, 255, 255, 1.0);
   font-family: sans-serif;
   border-radius: 0px;
   display: none; /* hidden by default */
