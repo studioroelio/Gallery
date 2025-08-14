@@ -27,10 +27,10 @@ outlet of Roel Schiffers.<br>
     </div>
      </div>
     
-    <img src="images/painting2.jpg" data-width="80" data-height="100" alt="Painting 2">
-     <img src="images/painting1.jpg" data-width="12" data-height="18" alt="Painting 1">
-    <img src="images/painting3.jpg" data-width="60" data-height="80" alt="Painting 3">
-    <img src="images/painting4.jpg" data-width="30" data-height="40" alt="Painting 4">
+    <img src="images/painting2.jpg" data-width="80" data-height="100" alt="Newspaper Flowers">
+     <img src="images/painting1.jpg" data-width="12" data-height="18" alt="Purple Shade>
+    <img src="images/painting3.jpg" data-width="60" data-height="80" alt="Table Still Life">
+    <img src="images/painting4.jpg" data-width="30" data-height="40" alt="Small Flowers with Lemonade">
     
 </div>
 
@@ -67,6 +67,24 @@ function scalePaintings() {
 // Run now (script is at end of body), and again on full load just in case
 scalePaintings();
 window.addEventListener('load', scalePaintings);
+
+/* ====== Hover Info Box ====== */
+const hoverInfo = document.getElementById('hover-info');
+
+document.querySelectorAll('.gallery img').forEach(img => {
+    const width = img.dataset.width;
+    const height = img.dataset.height;
+    const desc = img.alt || "Untitled";
+
+    img.addEventListener('mouseenter', () => {
+        hoverInfo.textContent = `${desc} – ${width}cm × ${height}cm`;
+        hoverInfo.style.display = 'block';
+    });
+
+    img.addEventListener('mouseleave', () => {
+        hoverInfo.style.display = 'none';
+    });
+});
     
 // ====== Drag to Scroll ======
 const gallery = document.querySelector('.gallery');
@@ -121,6 +139,9 @@ modalClose.addEventListener('click', () => {
 });
 
 </script>
+
+<!-- Hover Info Box -->
+<div class="hover-info" id="hover-info"></div>    
 
 </body>
 </html>
