@@ -74,23 +74,51 @@ document.addEventListener('DOMContentLoaded', () => {
     scalePaintings();
     window.addEventListener('load', scalePaintings);
 
+/* ====== Hover / Tap Info Box ====== */
+const hoverInfo = document.getElementById('hover-info');
+const paintings = document.querySelectorAll('.gallery img');
 
-    /* ====== Hover Info Box ====== */
-    const hoverInfo = document.getElementById('hover-info');
-    document.querySelectorAll('.gallery img').forEach(img => {
-        const width = img.dataset.width;
-        const height = img.dataset.height;
-        const desc = img.alt || "Untitled";
+paintings.forEach(img => {
+    const width = img.dataset.width;
+    const height = img.dataset.height;
+    const desc = img.alt || "Untitled";
+    const infoText = `${desc} – ${width}cm × ${height}cm`;
 
-        img.addEventListener('mouseenter', () => {
-            hoverInfo.textContent = `${desc} – ${width}cm × ${height}cm`;
+    // Desktop hover
+    img.addEventListener('mouseenter', () => {
+        if (!isTouchDevice()) {
+            hoverInfo.textContent = infoText;
             hoverInfo.style.display = 'block';
-        });
-
-        img.addEventListener('mouseleave', () => {
-            hoverInfo.style.display = 'none';
-        });
+        }
     });
+    img.addEventListener('mouseleave', () => {
+        if (!isTouchDevice()) {
+            hoverInfo.style.display = 'none';
+        }
+    });
+
+    // Mobile tap
+    img.addEventListener('click', (e) => {
+        if (isTouchDevice()) {
+            e.preventDefault();
+            // Toggle visibility
+            if (hoverInfo.style.display === 'block' && hoverInfo.textContent === infoText) {
+                hoverInfo.style.display = 'none';
+            } else {
+                hoverInfo.textContent = infoText;
+                hoverInfo.style.display = 'block';
+            }
+        }
+    });
+});
+
+// Helper function to detect touch devices
+function isTouchDevice() {
+    return ( 'ontouchstart' in window ) || 
+           ( navigator.maxTouchPoints > 0 ) || 
+           ( navigator.msMaxTouchPoints > 0 );
+}
+
 
 
     /* ====== Drag to Scroll ====== */
