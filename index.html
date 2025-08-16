@@ -73,9 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     scalePaintings();
     window.addEventListener('load', scalePaintings);
-
-
-    /* ====== Hover / Tap Info Box ====== */
+/* ====== Hover / Tap Info Box ====== */
 const hoverInfo = document.getElementById('hover-info');
 const paintings = document.querySelectorAll('.gallery img');
 let hideTimeout; // timer reference
@@ -86,45 +84,60 @@ paintings.forEach(img => {
     const desc = img.alt || "Untitled";
     const infoText = `${desc} – ${width}cm × ${height}cm`;
 
-    // Desktop hover
+    // Desktop hover (instant show/hide)
     img.addEventListener('mouseenter', () => {
         if (!isTouchDevice()) {
-            clearTimeout(hideTimeout);
             hoverInfo.textContent = infoText;
-            hoverInfo.classList.remove('hidden');
             hoverInfo.style.display = 'block';
+            hoverInfo.style.opacity = '1'; // force visible instantly
         }
     });
     img.addEventListener('mouseleave', () => {
         if (!isTouchDevice()) {
-            hoverInfo.classList.add('hidden');
-            setTimeout(() => hoverInfo.style.display = 'none', 500); // wait for fade
+            hoverInfo.style.display = 'none'; // instant hide
         }
     });
 
-    // Mobile tap
+    // Mobile tap (with fade)
     img.addEventListener('click', (e) => {
         if (isTouchDevice()) {
             e.preventDefault();
             clearTimeout(hideTimeout);
 
             if (hoverInfo.style.display === 'block' && hoverInfo.textContent === infoText) {
-                hoverInfo.classList.add('hidden');
-                setTimeout(() => hoverInfo.style.display = 'none', 500);
+                fadeOutInfo();
             } else {
                 hoverInfo.textContent = infoText;
                 hoverInfo.style.display = 'block';
-                hoverInfo.classList.remove('hidden');
+                hoverInfo.style.opacity = '1';
 
                 // Auto-hide after 3s with fade
                 hideTimeout = setTimeout(() => {
-                    hoverInfo.classList.add('hidden');
-                    setTimeout(() => hoverInfo.style.display = 'none', 500);
+                    fadeOutInfo();
                 }, 3000);
             }
         }
     });
 });
+
+// Helper: fade out info box
+function fadeOutInfo() {
+    hoverInfo.style.transition = 'opacity 0.5s ease';
+    hoverInfo.style.opacity = '0';
+    setTimeout(() => {
+        hoverInfo.style.display = 'none';
+        hoverInfo.style.opacity = '1'; // reset for next time
+    }, 500); // match transition time
+}
+
+// Helper: detect touch devices
+function isTouchDevice() {
+    return ( 'ontouchstart' in window ) || 
+           ( navigator.maxTouchPoints > 0 ) || 
+           ( navigator.msMaxTouchPoints > 0 );
+}
+
+
 
 // Helper function to detect touch devices
 function isTouchDevice() {
