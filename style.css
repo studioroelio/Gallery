@@ -25,6 +25,8 @@ body {
   overflow-y: hidden;
   white-space: nowrap;
   -webkit-overflow-scrolling: touch;
+
+  transform: translateY(-10vh);
 }
 
 .gallery:active {
