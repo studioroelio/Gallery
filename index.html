@@ -97,28 +97,28 @@ paintings.forEach(img => {
             hoverInfo.style.display = 'none'; // instant hide
         }
     });
+// ====== Mobile Tap to Show Info Box ======
+if (/Mobi|Android/i.test(navigator.userAgent)) {
+    document.querySelectorAll('.gallery img').forEach(img => {
+        img.addEventListener('click', () => {
+            const width = img.dataset.width;
+            const height = img.dataset.height;
+            const desc = img.alt || "Untitled";
 
-    // Mobile tap (with fade)
-    img.addEventListener('click', (e) => {
-        if (isTouchDevice()) {
-            e.preventDefault();
-            clearTimeout(hideTimeout);
+            hoverInfo.textContent = `${desc} – ${width}cm × ${height}cm`;
+            hoverInfo.style.display = 'block';
+            hoverInfo.classList.add('show');
+            hoverInfo.classList.remove('hide');
 
-            if (hoverInfo.style.display === 'block' && hoverInfo.textContent === infoText) {
-                fadeOutInfo();
-            } else {
-                hoverInfo.textContent = infoText;
-                hoverInfo.style.display = 'block';
-                hoverInfo.style.opacity = '1';
-
-                // Auto-hide after 3s with fade
-                hideTimeout = setTimeout(() => {
-                    fadeOutInfo();
-                }, 3000);
-            }
-        }
+            clearTimeout(window.hoverInfoTimeout);
+            window.hoverInfoTimeout = setTimeout(() => {
+                hoverInfo.classList.add('hide');
+                hoverInfo.classList.remove('show');
+                setTimeout(() => hoverInfo.style.display = 'none', 500); // wait for fade
+            }, 3000); // visible for 3s
+        });
     });
-});
+}
 
 // Helper: fade out info box
 function fadeOutInfo() {
