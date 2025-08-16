@@ -74,9 +74,11 @@ document.addEventListener('DOMContentLoaded', () => {
     scalePaintings();
     window.addEventListener('load', scalePaintings);
 
-/* ====== Hover / Tap Info Box ====== */
+
+    /* ====== Hover / Tap Info Box ====== */
 const hoverInfo = document.getElementById('hover-info');
 const paintings = document.querySelectorAll('.gallery img');
+let hideTimeout; // timer reference
 
 paintings.forEach(img => {
     const width = img.dataset.width;
@@ -87,13 +89,16 @@ paintings.forEach(img => {
     // Desktop hover
     img.addEventListener('mouseenter', () => {
         if (!isTouchDevice()) {
+            clearTimeout(hideTimeout);
             hoverInfo.textContent = infoText;
+            hoverInfo.classList.remove('hidden');
             hoverInfo.style.display = 'block';
         }
     });
     img.addEventListener('mouseleave', () => {
         if (!isTouchDevice()) {
-            hoverInfo.style.display = 'none';
+            hoverInfo.classList.add('hidden');
+            setTimeout(() => hoverInfo.style.display = 'none', 500); // wait for fade
         }
     });
 
@@ -101,16 +106,40 @@ paintings.forEach(img => {
     img.addEventListener('click', (e) => {
         if (isTouchDevice()) {
             e.preventDefault();
-            // Toggle visibility
+            clearTimeout(hideTimeout);
+
             if (hoverInfo.style.display === 'block' && hoverInfo.textContent === infoText) {
-                hoverInfo.style.display = 'none';
+                hoverInfo.classList.add('hidden');
+                setTimeout(() => hoverInfo.style.display = 'none', 500);
             } else {
                 hoverInfo.textContent = infoText;
                 hoverInfo.style.display = 'block';
+                hoverInfo.classList.remove('hidden');
+
+                // Auto-hide after 3s with fade
+                hideTimeout = setTimeout(() => {
+                    hoverInfo.classList.add('hidden');
+                    setTimeout(() => hoverInfo.style.display = 'none', 500);
+                }, 3000);
             }
         }
     });
 });
+
+// Helper function to detect touch devices
+function isTouchDevice() {
+    return ( 'ontouchstart' in window ) || 
+           ( navigator.maxTouchPoints > 0 ) || 
+           ( navigator.msMaxTouchPoints > 0 );
+}
+
+
+// Helper function to detect touch devices
+function isTouchDevice() {
+    return ( 'ontouchstart' in window ) || 
+           ( navigator.maxTouchPoints > 0 ) || 
+           ( navigator.msMaxTouchPoints > 0 );
+}
 
 // Helper function to detect touch devices
 function isTouchDevice() {
