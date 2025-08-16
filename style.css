@@ -115,11 +115,6 @@ body {
 .contact-icons i {
   font-size: 24px;   /* size of the icon */
   color: rgba(0,0,255);       /* set any color you like */
-  transition: color 0.3s ease;
-}
-
-.contact-icons i:hover {
-  color: darkblue;   /* hover effect */
 }
 
 .hover-info {
