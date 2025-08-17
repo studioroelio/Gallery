@@ -47,174 +47,153 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+  /* ===== Helpers ===== */
+  const isTouchDevice = () =>
+    'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
 
-    /* ====== Scale Paintings ====== */
-    function scalePaintings() {
-        const paintings = document.querySelectorAll(".gallery img");
-        let maxWidth = 0;
+  /* ===== True-to-size scaling with height cap ===== */
+  function scalePaintings() {
+    const imgs = Array.from(document.querySelectorAll('.gallery img'));
+    if (!imgs.length) return;
 
-        paintings.forEach(img => {
-            const w = parseFloat(img.dataset.width);
-            if (!isNaN(w) && w > maxWidth) maxWidth = w;
-        });
+    // Collect real-world dimensions (cm)
+    let maxW = 0, maxH = 0;
+    imgs.forEach(img => {
+      const w = parseFloat(img.dataset.width);
+      const h = parseFloat(img.dataset.height);
+      if (!isNaN(w) && w > maxW) maxW = w;
+      if (!isNaN(h) && h > maxH) maxH = h;
+    });
 
-        const LARGEST_DISPLAY_WIDTH = 400; // px for the biggest painting
+    // Base target: max painting width ≈ 400px, but also cap tallest height to 65vh
+    const MAX_W_PX = Math.min(420, Math.max(260, Math.round(window.innerWidth * 0.45)));
+    const MAX_H_PX = Math.round(window.innerHeight * 0.65);
 
-        if (maxWidth <= 0) {
-            paintings.forEach(img => img.style.width = LARGEST_DISPLAY_WIDTH + 'px');
-            return;
-        }
+    // First try sizing by width
+    let cmToPx = maxW > 0 ? (MAX_W_PX / maxW) : 1;
 
-        paintings.forEach(img => {
-            const realWidth = parseFloat(img.dataset.width);
-            const scale = (!isNaN(realWidth) ? realWidth : maxWidth) / maxWidth;
-            img.style.width = (scale * LARGEST_DISPLAY_WIDTH) + 'px';
-        });
+    // If that makes the tallest painting exceed our height cap, reduce scale
+    if (maxH > 0 && maxH * cmToPx > MAX_H_PX) {
+      cmToPx = MAX_H_PX / maxH;
     }
-    scalePaintings();
-    window.addEventListener('load', scalePaintings);
-/* ====== Hover / Tap Info Box ====== */
-const hoverInfo = document.getElementById('hover-info');
-const paintings = document.querySelectorAll('.gallery img');
-let hideTimeout; // timer reference
 
-paintings.forEach(img => {
+    // Apply widths; heights follow automatically (keep aspect from the image)
+    imgs.forEach(img => {
+      const realW = parseFloat(img.dataset.width);
+      const w = !isNaN(realW) ? realW : maxW || 1;
+      img.style.width = (w * cmToPx) + 'px';
+      img.style.height = 'auto';
+    });
+  }
+
+  scalePaintings();
+  window.addEventListener('load', scalePaintings);
+  window.addEventListener('resize', () => {
+    // Debounce resize a bit for mobile rotations
+    clearTimeout(window.__resizeTimer);
+    window.__resizeTimer = setTimeout(scalePaintings, 120);
+  });
+
+  /* ===== Hover / Tap Info Box ===== */
+  const hoverInfo = document.getElementById('hover-info');
+  const paintings = document.querySelectorAll('.gallery img');
+
+  // Desktop: instant show/hide
+  paintings.forEach(img => {
     const width = img.dataset.width;
     const height = img.dataset.height;
-    const desc = img.alt || "Untitled";
+    const desc = img.alt || 'Untitled';
     const infoText = `${desc} – ${width}cm × ${height}cm`;
 
-    // Desktop hover (instant show/hide)
     img.addEventListener('mouseenter', () => {
-        if (!isTouchDevice()) {
-            hoverInfo.textContent = infoText;
-            hoverInfo.style.display = 'block';
-            hoverInfo.style.opacity = '1'; // force visible instantly
-        }
+      if (!isTouchDevice()) {
+        hoverInfo.textContent = infoText;
+        hoverInfo.style.display = 'block';
+        hoverInfo.classList.add('show');
+        hoverInfo.classList.remove('hide');
+      }
     });
+
     img.addEventListener('mouseleave', () => {
-        if (!isTouchDevice()) {
-            hoverInfo.style.display = 'none'; // instant hide
-        }
+      if (!isTouchDevice()) {
+        hoverInfo.classList.remove('show');
+        hoverInfo.classList.add('hide');
+        setTimeout(() => (hoverInfo.style.display = 'none'), 500);
+      }
     });
-// ====== Mobile Tap to Show Info Box ======
-if (/Mobi|Android/i.test(navigator.userAgent)) {
-    document.querySelectorAll('.gallery img').forEach(img => {
-        img.addEventListener('click', () => {
-            const width = img.dataset.width;
-            const height = img.dataset.height;
-            const desc = img.alt || "Untitled";
+  });
 
-            hoverInfo.textContent = `${desc} – ${width}cm × ${height}cm`;
-            hoverInfo.style.display = 'block';
-            hoverInfo.classList.add('show');
-            hoverInfo.classList.remove('hide');
+  // Mobile: tap to show, fade after 3s
+  if (isTouchDevice()) {
+    let hideTimeout;
+    paintings.forEach(img => {
+      img.addEventListener('click', (e) => {
+        e.preventDefault(); // prevent modal from opening on tap
+        const width = img.dataset.width;
+        const height = img.dataset.height;
+        const desc = img.alt || 'Untitled';
+        const infoText = `${desc} – ${width}cm × ${height}cm`;
 
-            clearTimeout(window.hoverInfoTimeout);
-            window.hoverInfoTimeout = setTimeout(() => {
-                hoverInfo.classList.add('hide');
-                hoverInfo.classList.remove('show');
-                setTimeout(() => hoverInfo.style.display = 'none', 500); // wait for fade
-            }, 3000); // visible for 3s
-        });
+        hoverInfo.textContent = infoText;
+        hoverInfo.style.display = 'block';
+        hoverInfo.classList.add('show');
+        hoverInfo.classList.remove('hide');
+
+        clearTimeout(hideTimeout);
+        hideTimeout = setTimeout(() => {
+          hoverInfo.classList.add('hide');
+          hoverInfo.classList.remove('show');
+          setTimeout(() => (hoverInfo.style.display = 'none'), 500);
+        }, 3000);
+      });
     });
-}
+  }
 
-// Helper: fade out info box
-function fadeOutInfo() {
-    hoverInfo.style.transition = 'opacity 0.5s ease';
-    hoverInfo.style.opacity = '0';
-    setTimeout(() => {
-        hoverInfo.style.display = 'none';
-        hoverInfo.style.opacity = '1'; // reset for next time
-    }, 500); // match transition time
-}
+  /* ===== Drag to Scroll ===== */
+  const gallery = document.querySelector('.gallery');
+  let isDown = false, startX = 0, scrollLeft = 0;
 
-// Helper: detect touch devices
-function isTouchDevice() {
-    return ( 'ontouchstart' in window ) || 
-           ( navigator.maxTouchPoints > 0 ) || 
-           ( navigator.msMaxTouchPoints > 0 );
-}
+  gallery.addEventListener('wheel', (e) => {
+    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+      e.preventDefault();
+      gallery.scrollLeft += e.deltaY;
+    }
+  }, { passive: false });
 
+  gallery.addEventListener('mousedown', (e) => {
+    isDown = true;
+    startX = e.pageX - gallery.offsetLeft;
+    scrollLeft = gallery.scrollLeft;
+  });
 
+  gallery.addEventListener('mouseleave', () => { isDown = false; });
+  gallery.addEventListener('mouseup', () => { isDown = false; });
 
-// Helper function to detect touch devices
-function isTouchDevice() {
-    return ( 'ontouchstart' in window ) || 
-           ( navigator.maxTouchPoints > 0 ) || 
-           ( navigator.msMaxTouchPoints > 0 );
-}
+  gallery.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - gallery.offsetLeft;
+    const walk = (x - startX) * 2; // scroll speed
+    gallery.scrollLeft = scrollLeft - walk;
+  });
 
-
-// Helper function to detect touch devices
-function isTouchDevice() {
-    return ( 'ontouchstart' in window ) || 
-           ( navigator.maxTouchPoints > 0 ) || 
-           ( navigator.msMaxTouchPoints > 0 );
-}
-
-// Helper function to detect touch devices
-function isTouchDevice() {
-    return ( 'ontouchstart' in window ) || 
-           ( navigator.maxTouchPoints > 0 ) || 
-           ( navigator.msMaxTouchPoints > 0 );
-}
-
-
-
-    /* ====== Drag to Scroll ====== */
-    const gallery = document.querySelector('.gallery');
-    let isDown = false;
-    let startX;
-    let scrollLeft;
-
-    gallery.addEventListener('wheel', (e) => {
-        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-            e.preventDefault();
-            gallery.scrollLeft += e.deltaY;
-        }
-    }, { passive: false });
-
-    gallery.addEventListener('mousedown', (e) => {
-        isDown = true;
-        startX = e.pageX - gallery.offsetLeft;
-        scrollLeft = gallery.scrollLeft;
-    });
-
-    gallery.addEventListener('mouseleave', () => {
-        isDown = false;
-    });
-
-    gallery.addEventListener('mouseup', () => {
-        isDown = false;
-    });
-
-    gallery.addEventListener('mousemove', (e) => {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - gallery.offsetLeft;
-        const walk = (x - startX) * 2; // scroll speed
-        gallery.scrollLeft = scrollLeft - walk;
-    });
-
-
-    /* ====== Image Modal ====== */
+  /* ===== Image Modal (desktop only so tap stays for info) ===== */
+  if (!isTouchDevice()) {
     const modal = document.getElementById('modal');
     const modalImg = document.getElementById('modal-img');
     const modalClose = document.getElementById('modal-close');
 
-    document.querySelectorAll('.gallery img').forEach(img => {
-        img.addEventListener('click', () => {
-            modal.style.display = 'block';
-            modalImg.src = img.src;
-        });
+    paintings.forEach(img => {
+      img.addEventListener('click', () => {
+        modal.style.display = 'block';
+        modalImg.src = img.src;
+      });
     });
 
     modalClose.addEventListener('click', () => {
-        modal.style.display = 'none';
+      modal.style.display = 'none';
     });
-
+  }
 });
 </script>
 
