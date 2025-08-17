@@ -115,8 +115,10 @@ body {
 }
 
 .contact-icons i {
+  text-decoration: none;
   font-size: 24px;   /* size of the icon */
   color: rgba(0,0,255);       /* set any color you like */
+  margin: 0 4px;
 }
 
 .hover-info {
