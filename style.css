@@ -96,7 +96,8 @@ body {
 }
 
 .logo img {
-  height: 45px; /* adjust size */
+  height: 7vh;   /* scales with screen height */
+  width: auto;   /* keep proportions */
 }
 
 /* Intro/contact box on left side */
