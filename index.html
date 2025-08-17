@@ -86,13 +86,37 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  scalePaintings();
-  window.addEventListener('load', scalePaintings);
-  window.addEventListener('resize', () => {
-    // Debounce resize a bit for mobile rotations
-    clearTimeout(window.__resizeTimer);
-    window.__resizeTimer = setTimeout(scalePaintings, 120);
-  });
+/* ====== Scale Paintings ====== */
+function scalePaintings() {
+    const paintings = document.querySelectorAll(".gallery img");
+    let maxHeight = 0;
+
+    // Find the tallest painting in real cm (data-height)
+    paintings.forEach(img => {
+        const h = parseFloat(img.dataset.height);
+        if (!isNaN(h) && h > maxHeight) maxHeight = h;
+    });
+
+    // Largest painting should be 85% of viewport height
+    const LARGEST_DISPLAY_HEIGHT = window.innerHeight * 0.85;
+
+    if (maxHeight <= 0) {
+        paintings.forEach(img => img.style.height = LARGEST_DISPLAY_HEIGHT + 'px');
+        return;
+    }
+
+    // Scale each painting proportionally based on real cm height
+    paintings.forEach(img => {
+        const realHeight = parseFloat(img.dataset.height);
+        const scale = (!isNaN(realHeight) ? realHeight : maxHeight) / maxHeight;
+        img.style.height = (scale * LARGEST_DISPLAY_HEIGHT) + 'px';
+        img.style.width = 'auto'; // let width adjust automatically
+    });
+}
+
+// Run once and on resize
+scalePaintings();
+window.addEventListener('resize', scalePaintings);
 
   /* ===== Hover / Tap Info Box ===== */
   const hoverInfo = document.getElementById('hover-info');
