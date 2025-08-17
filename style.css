@@ -96,7 +96,7 @@ body {
 }
 
 .logo img {
-  height: 4vh;   /* scales with screen height */
+  height: 6vh;   /* scales with screen height */
   width: auto;   /* keep proportions */
 }
 
