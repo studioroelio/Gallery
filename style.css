@@ -131,4 +131,15 @@ body {
   display: none; /* hidden by default */
   pointer-events: none; /* so it doesn’t interfere with hover */
   z-index: 5000;
+  opacity: 0; /* start invisible */
+  transition: opacity 0.5s ease; /* fade effect */
+}
+
+.hover-info.show {
+  display: block;
+  opacity: 1; /* fades in */
+}
+
+.hover-info.hide {
+  opacity: 0; /* fades out */
 }
