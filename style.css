@@ -94,11 +94,12 @@ body {
 
 /* Intro/contact box on left side */ 
 .intro-box { 
-  flex: 0 0 100px; /* fixed width column */ 
+  flex: 0 0 300px; /* fixed width column */ 
   font-size: 14px; 
   line-height: 1.5; 
   background-color: rgba(255, 255, 255, 0.0); 
   padding: 10px; 
+  white-space: normal; /* allow text to wrap instead of manual <br> */
 } 
 /* Intro/ Blue colour highlight*/ 
 .highlight { 
@@ -137,4 +138,22 @@ hover-info {
 .hover-info.hide { opacity: 0; /* fades out */ 
                  }
 
+/* Filter link */
+.filter-toggle a {
+  color: rgba(0,0,255,1);
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Transition for filtering */
+.gallery img {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.gallery img.hidden {
+  opacity: 0;
+  transform: scale(0.8);
+  pointer-events: none;
+}
 
