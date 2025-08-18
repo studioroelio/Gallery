@@ -53,6 +53,10 @@ body {
   transform: translateY(-9vh);
 }
 
+.gallery img:nth-child(7) {
+  transform: translateY(-11vh);
+}
+
 .gallery img { height: auto; max-height: 85vh; }
 
 /* Enlarged modal view */
