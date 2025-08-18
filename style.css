@@ -1,154 +1,220 @@
-/* Reset some default browser styles */
-body {
-  margin: 0;
-  font-family: sans-serif;
-  background-image: url('images/gallery-wall-floor.jpg');
-  background-repeat: no-repeat;
-  background-position: center bottom;
-  background-size: cover;
-  background-color: #f5f5f0;
-  overflow: hidden;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studioroelio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
 
-/* Horizontal gallery container */
-.gallery {
-  display: flex;
-  align-items: center;
-  height: 100vh;
-  gap: 40px;
-  cursor: grab;
-  position: relative;
-  padding-left: 40px;
-  padding-right: 40px;
-  padding-bottom: 15vh;
-  overflow-x: auto;
-  overflow-y: hidden;
-  white-space: nowrap;
-  -webkit-overflow-scrolling: touch;
+<!-- Logo -->
+<div class="logo">
+    <img src="images/logo.png" alt="Studioroelio Logo">
+</div>
 
-  transform: translateY(-4vh);
-}
+<!-- Gallery -->
+<div class="gallery">
 
-.gallery:active {
-  cursor: grabbing;
-}
+    <!-- intro in gallery -->
+    <div class="intro-box">
+        <p>
+            <span class="highlight">studioroelio</span> is the creative outlet of Roel Schiffers.
+            Roel is a self-taught artist whose paintings reimagine moments from his daily life and travel. 
+            Working from his own photographs, he transforms these everyday moments with bold color, layered patterns, 
+            and a sense of play. His imagery often balances architectural detail with imagined arrangements of objects, 
+            blurring the line between observation and memory.
+        </p>
 
-/* Painting images (scaled via JS) */
-.gallery img {
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-  border: 0px solid white;
-  object-fit: contain;
-  transition: transform 0.3s ease;
-}
+        <!-- Filter toggle link -->
+        <p class="filter-toggle">
+            <a href="#" id="filter-link">See which paintings are still available</a>
+        </p>
 
-.gallery img:nth-child(3) {
-  transform: translateY(-14vh);
-}
+        <div class="contact-icons">
+            <a href="mailto:studioroelio@hotmail.com" title="Email">
+                <i class="fa-solid fa-envelope"></i>
+            </a>
+            <a href="https://instagram.com/studioroelio" target="_blank" title="Instagram">
+                <i class="fa-solid fa-camera"></i>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Add availability data-status -->
+    <img src="images/painting2.jpg" data-width="80" data-height="100" alt="Newspaper Flowers" data-status="available">
+    <img src="images/painting1.jpg" data-width="12" data-height="18" alt="Purple Shade" data-status="sold">
+    <img src="images/painting3.jpg" data-width="60" data-height="80" alt="Table Still Life" data-status="available">
+    <img src="images/painting4.jpg" data-width="30" data-height="40" alt="Small Flowers with Lemonade" data-status="sold">
+    <img src="images/Painting6.jpg" data-width="70" data-height="100" alt="Still life AE (Commission)" data-status="sold">
+    <img src="images/painting8.jpg" data-width="24" data-height="30" alt="Cobblestone shadow" data-status="available">
 
-.gallery img:nth-child(4) {
-  transform: translateY(-2vh);
-}
+</div>
 
-.gallery img:nth-child(5) {
-  transform: translateY(-9vh);
-}
+<!-- Modal for enlarged view -->
+<div class="modal" id="modal">
+    <span class="modal-close" id="modal-close">&times;</span>
+    <img id="modal-img" src="" alt="Enlarged Painting">
+</div>
 
-.gallery img:nth-child(7) {
-  transform: translateY(-11vh);
-}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
 
-.gallery img { height: auto; max-height: 85vh; }
+    /* ====== Detect touch devices (mobile/tablet) ====== */
+    function isTouchDevice() {
+        return (
+            'ontouchstart' in window ||
+            navigator.maxTouchPoints > 0 ||
+            navigator.msTouchPoints > 0
+        );
+    }
 
-/* Enlarged modal view */
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 2000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,255,1);
-}
+    /* ====== Scale Paintings ====== */
+    function scalePaintings() {
+        const paintings = document.querySelectorAll(".gallery img");
+        let maxHeight = 0;
 
-.modal img {
-  display: block;
-  max-width: 90%;
-  max-height: 90%;
-  margin: auto;
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%);
-}
+        paintings.forEach(img => {
+            const h = parseFloat(img.dataset.height);
+            if (!isNaN(h) && h > maxHeight) maxHeight = h;
+        });
 
-.modal-close {
-  position: fixed;
-  top: 20px;
-  right: 30px;
-  font-size: 40px;
-  font-weight: bold;
-  color: white;
-  cursor: pointer;
-}
+        const LARGEST_DISPLAY_HEIGHT = window.innerHeight * (isTouchDevice() ? 0.77 : 0.80);
 
-/* Logo in top-left */
-.logo {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  z-index: 3000;
-}
+        if (maxHeight <= 0) {
+            paintings.forEach(img => img.style.height = LARGEST_DISPLAY_HEIGHT + 'px');
+            return;
+        }
 
-.logo img {
-  height: 6vh;   /* scales with screen height */
-  width: auto;   /* keep proportions */
-}
+        paintings.forEach(img => {
+            const realHeight = parseFloat(img.dataset.height);
+            const scale = (!isNaN(realHeight) ? realHeight : maxHeight) / maxHeight;
+            img.style.height = (scale * LARGEST_DISPLAY_HEIGHT) + 'px';
+            img.style.width = 'auto';
+        });
+    }
 
-/* Intro/contact box on left side */
-.intro-box {
-  flex: 0 0 100px; /* fixed width column */
-  font-size: 14px;
-  line-height: 1.5;
-  background-color: rgba(255, 255, 255, 0.0);
-  padding: 10px;
-}
+    scalePaintings();
+    window.addEventListener('resize', scalePaintings);
 
-/* Intro/ Blue colour highlight*/
-.highlight {
-  color: rgba(0,0,255);
-  font-weight: bold; /* optional */
-}
+    /* ====== Hover / Tap Info Box ====== */
+    const hoverInfo = document.getElementById('hover-info');
+    const paintings = document.querySelectorAll('.gallery img');
 
-.contact-icons i {
-  font-size: 18px;   /* size of the icon */
-  color: rgba(0,0,255);       /* set any color you like */
-  margin: 0 4px;
-  text-decoration: none;
-}
+    paintings.forEach(img => {
+        const width = img.dataset.width;
+        const height = img.dataset.height;
+        const desc = img.alt || "Untitled";
+        const infoText = `${desc} – ${width}cm × ${height}cm`;
 
-.hover-info {
-  position: fixed;
-  bottom: 30px; /* adjust padding from bottom */
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgba(0, 0, 255, 1.0);
-  padding: 8px 14px;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 1.0);
-  font-family: sans-serif;
-  border-radius: 0px;
-  display: none; /* hidden by default */
-  pointer-events: none; /* so it doesn’t interfere with hover */
-  z-index: 5000;
-  opacity: 0; /* start invisible */
-  transition: opacity 0.5s ease; /* fade effect */
-}
+        img.addEventListener('mouseenter', () => {
+            if (!isTouchDevice()) {
+                hoverInfo.textContent = infoText;
+                hoverInfo.style.display = 'block';
+                hoverInfo.style.opacity = '1';
+            }
+        });
+        img.addEventListener('mouseleave', () => {
+            if (!isTouchDevice()) {
+                hoverInfo.style.display = 'none';
+            }
+        });
 
-.hover-info.show {
-  display: block;
-  opacity: 1; /* fades in */
-}
+        if (isTouchDevice()) {
+            img.addEventListener('click', () => {
+                hoverInfo.textContent = infoText;
+                hoverInfo.style.display = 'block';
+                hoverInfo.classList.add('show');
+                hoverInfo.classList.remove('hide');
 
-.hover-info.hide {
-  opacity: 0; /* fades out */
-}
+                clearTimeout(window.hoverInfoTimeout);
+                window.hoverInfoTimeout = setTimeout(() => {
+                    hoverInfo.classList.add('hide');
+                    hoverInfo.classList.remove('show');
+                    setTimeout(() => hoverInfo.style.display = 'none', 500);
+                }, 3000);
+            });
+        }
+    });
+
+    /* ====== Drag to Scroll ====== */
+    const gallery = document.querySelector('.gallery');
+    let isDown = false;
+    let startX, scrollLeft;
+
+    gallery.addEventListener('wheel', (e) => {
+        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+            e.preventDefault();
+            gallery.scrollLeft += e.deltaY;
+        }
+    }, { passive: false });
+
+    gallery.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startX = e.pageX - gallery.offsetLeft;
+        scrollLeft = gallery.scrollLeft;
+    });
+
+    gallery.addEventListener('mouseleave', () => isDown = false);
+    gallery.addEventListener('mouseup', () => isDown = false);
+
+    gallery.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - gallery.offsetLeft;
+        const walk = (x - startX) * 2;
+        gallery.scrollLeft = scrollLeft - walk;
+    });
+
+    /* ====== Image Modal ====== */
+    const modal = document.getElementById('modal');
+    const modalImg = document.getElementById('modal-img');
+    const modalClose = document.getElementById('modal-close');
+
+    document.querySelectorAll('.gallery img').forEach(img => {
+        img.addEventListener('click', () => {
+            if (!isTouchDevice()) {
+                modal.style.display = 'block';
+                modalImg.src = img.src;
+            }
+        });
+    });
+
+    modalClose.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    /* ====== Filter Available Paintings ====== */
+    const filterLink = document.getElementById('filter-link');
+    let showingAvailableOnly = false;
+
+    filterLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        const paintings = document.querySelectorAll('.gallery img');
+
+        if (!showingAvailableOnly) {
+            paintings.forEach(img => {
+                if (img.dataset.status === "available") {
+                    img.classList.remove("hidden");
+                } else {
+                    img.classList.add("hidden");
+                }
+            });
+            filterLink.textContent = "See all paintings";
+            showingAvailableOnly = true;
+        } else {
+            paintings.forEach(img => img.classList.remove("hidden"));
+            filterLink.textContent = "See which paintings are still available";
+            showingAvailableOnly = false;
+        }
+    });
+
+});
+</script>
+
+<!-- Hover Info Box -->
+<div class="hover-info" id="hover-info"></div>    
+
+</body>
+</html>
