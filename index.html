@@ -21,15 +21,20 @@
     <div class="intro-box">
         <p>
             <span class="highlight">studioroelio</span> is the creative outlet of Roel Schiffers. <br>
-           Roel creates paintings that reinterpret found moments from his daily life and travel. 
-            Often starting from his own photographs, he reimagines familiar scenes with bold color, 
-            layered patterns, and a playful attention to the ordinary. <br>
-    
-            His compositions often balance architectural detail with imagined arrangements of objects, blurring the 
-            line between observation and memory. A self-taught artist and full time architect, 
+            
+        Roel creates paintings that reinterpret found moments from his daily life and travel. 
+            Often starting from his own photographs, he reimagines familiar scenes with bold 
+            color, layered patterns, and a playful attention to the ordinary. His compositions 
+            often balance architectural detail with imagined arrangements of objects, blurring
+            the line between observation and memory. A self-taught artist and full time architect, 
             he lives and works in Switzerland.
         </p>
-        
+
+        <!-- Filter toggle link -->
+        <p class="filter-toggle">
+            <a href="#" id="filter-link">See available paintings</a>
+        </p>
+
         <div class="contact-icons">
             <a href="mailto:studioroelio@hotmail.com" title="Email">
                 <i class="fa-solid fa-envelope"></i>
@@ -187,7 +192,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterLink = document.getElementById('filter-link');
     let showingAvailableOnly = false;
 
-    
+    filterLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        const paintings = document.querySelectorAll('.gallery img');
+
+        if (!showingAvailableOnly) {
+            paintings.forEach(img => {
+                if (img.dataset.status === "available") {
+                    img.classList.remove("hidden");
+                } else {
+                    img.classList.add("hidden");
+                }
+            });
+            filterLink.textContent = "See all paintings";
+            showingAvailableOnly = true;
+        } else {
+            paintings.forEach(img => img.classList.remove("hidden"));
+            filterLink.textContent = "See available paintings";
+            showingAvailableOnly = false;
+        }
     });
 
 });
