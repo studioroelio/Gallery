@@ -29,6 +29,29 @@ body {
 } 
 .gallery:active { cursor: grabbing; } 
 
+/* Intro/contact box on left side */ 
+.intro-box { 
+  flex: 0 0 300px; /* fixed width column */ 
+  font-size: 14px; 
+  line-height: 1.5; 
+  background-color: rgba(255, 255, 255, 0.0); 
+  padding: 10px; 
+  white-space: normal; /* allow text to wrap instead of manual <br> */
+} 
+/* Intro/ Blue colour highlight*/ 
+.highlight { 
+  color: rgba(0,0,255); 
+  font-weight: bold; /* optional */ 
+} 
+
+.contact-icons i { 
+  font-size: 18px; /* size of the icon */ 
+  color: rgba(0,0,255); /* set any color you like */ 
+  margin: 0 4px;
+  text-decoration: none;
+} .
+
+
 /* Painting images (scaled via JS) */ 
 .gallery img { box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
               border: 0px solid white; 
@@ -91,28 +114,6 @@ body {
   height: 6vh;  /* scales with screen height */ 
   width: auto; /* keep proportions */ 
 } 
-
-/* Intro/contact box on left side */ 
-.intro-box { 
-  flex: 0 0 300px; /* fixed width column */ 
-  font-size: 14px; 
-  line-height: 1.5; 
-  background-color: rgba(255, 255, 255, 0.0); 
-  padding: 10px; 
-  white-space: normal; /* allow text to wrap instead of manual <br> */
-} 
-/* Intro/ Blue colour highlight*/ 
-.highlight { 
-  color: rgba(0,0,255); 
-  font-weight: bold; /* optional */ 
-} 
-
-.contact-icons i { 
-  font-size: 18px; /* size of the icon */ 
-  color: rgba(0,0,255); /* set any color you like */ 
-  margin: 0 4px;
-  text-decoration: none;
-} .
 
 hover-info { 
   position: fixed; 
