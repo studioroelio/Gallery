@@ -20,12 +20,11 @@ body {
   position: relative;
   padding-left: 40px;
   padding-right: 40px;
-  padding-bottom: 10vh;
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
   -webkit-overflow-scrolling: touch;
-  transform: translateY(-4vh);
+  transform: translateY(-7vh);
 } 
 .gallery:active { cursor: grabbing; } 
 
