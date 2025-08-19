@@ -55,8 +55,14 @@ body {
 .gallery img { box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
               border: 0px solid white; 
               object-fit: contain; 
-              transition: transform 0.3s ease; 
-             } 
+              transition: opacity 0.5s ease, 
+              transform 0.5s ease; /* smooth changes */
+}
+
+.gallery img.hidden {
+  opacity: 0;
+  transform: scale(0.9); /* optional shrink effect */
+  poin
 
 .gallery img:nth-child(3) { transform: translateY(-14vh); 
                           }
