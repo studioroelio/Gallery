@@ -142,3 +142,17 @@ body {
 .hidden {
   display: none !important;
 }
+
+.filter-toggle a {
+  color: rgba(0,0,255,1);   /* same blue as your highlight */
+  text-decoration: none;    /* remove underline */
+  cursor: pointer;          /* still feels clickable */
+}
+
+.filter-toggle a:visited {
+  color: rgba(0,0,255,1);   /* stop purple visited state */
+}
+
+.filter-toggle a:hover {
+  text-decoration: underline;  /* optional: underline only on hover */
+}
