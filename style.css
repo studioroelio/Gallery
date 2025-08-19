@@ -43,12 +43,13 @@ body {
   font-weight: bold; /* optional */ 
 } 
 
+/* ========== CONTACT ICONS ========== */
 .contact-icons i { 
   font-size: 16px; /* size of the icon */ 
   color: rgba(0,0,255); /* set any color you like */ 
   margin: 0 4px;
   text-decoration: none;
-} .
+} 
 
 
 /* Painting images (scaled via JS) */ 
@@ -59,11 +60,14 @@ body {
               transform 0.5s ease; /* smooth changes */
 }
 
+/* ========== PAINTINGS ========== */
 .gallery img.hidden {
   opacity: 0;
   transform: scale(0.9); /* optional shrink effect */
-  poin
+ pointer-events: none;  /* prevents interaction while hidden */
+}
 
+/* Manual vertical staggering */
 .gallery img:nth-child(3) { transform: translateY(-14vh); 
                           }
 .gallery img:nth-child(4) { transform: translateY(-2vh); 
@@ -74,6 +78,16 @@ body {
                           }
 .gallery img { height: auto; max-height: 85vh; 
              }
+.hidden {
+  display: none !important;
+}
+
+/* Fade + shrink for filter toggle */
+.gallery img.hidden {
+  opacity: 0;
+  transform: scale(0.9);
+  pointer-events: none; /* prevents interaction while hidden */
+}
 
 /* Enlarged modal view */ 
 .modal { 
@@ -144,9 +158,6 @@ body {
 .hover-info.hide { opacity: 0; /* fades out */ 
                  }
 
-.hidden {
-  display: none !important;
-}
 
 .filter-toggle a {
   color: rgba(0,0,255,1);   /* same blue as your highlight */
