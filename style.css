@@ -1,14 +1,15 @@
 /* ========== RESET & BASE STYLES ========== */
-body { 
-  margin: 0; 
-  font-family: sans-serif; 
-  background-image: url('images/gallery-wall-floor.jpg'); 
-  background-repeat: no-repeat; 
-  background-position: center bottom; 
-  background-size: cover; 
-  background-color: #f5f5f0; 
-  overflow: hidden;  /* disables vertical scrolling */
+body {
+  margin: 0;
+  padding: 0;
+  background-image: url('images/gallery-wall-floor.jpg'); /* your long jpeg */
+  background-repeat: repeat-x;       /* tile horizontally */
+  background-size: auto 4vh;        /* scale height to 85vh, keep proportions */
+  background-position: bottom center; /* anchor to bottom */
+  background-attachment: scroll;     /* make it move with the page */
+  overflow-x: hidden;                /* avoid double scrollbars */
 }
+
 
 
 /* ========== GALLERY CONTAINER ========== */
