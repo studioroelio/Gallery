@@ -6,7 +6,7 @@ body {
   background-color: #f5f5f0;
   background-image: url('images/gallery-wall-floor.jpg'); /* your long jpeg */
   background-repeat: repeat-x;       /* tile horizontally */
-  background-size: auto 4vh;        /* scale height to 85vh, keep proportions */
+  background-size: auto 6vh;        /* scale height to 85vh, keep proportions */
   background-position: bottom center; /* anchor to bottom */
   background-attachment: scroll;     /* make it move with the page */
   overflow-x: hidden;                /* avoid double scrollbars */
