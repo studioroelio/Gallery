@@ -115,7 +115,7 @@ body {
   width: auto; /* keep proportions */ 
 } 
 
-hover-info { 
+.hover-info { 
   position: fixed; 
   bottom: 30px; /* adjust padding from bottom */
   left: 50%; 
@@ -139,3 +139,6 @@ hover-info {
 .hover-info.hide { opacity: 0; /* fades out */ 
                  }
 
+.hidden {
+  display: none !important;
+}
