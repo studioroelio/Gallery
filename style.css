@@ -135,7 +135,7 @@ body {
 /* ========== HOVER INFO BOX ========== */
 .hover-info { 
   position: fixed; 
-  bottom: 30px;
+  bottom: 6vh;
   left: 50%; 
   transform: translateX(-50%);
   background-color: rgba(0, 0, 255, 1.0); 
