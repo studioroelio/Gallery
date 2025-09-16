@@ -188,6 +188,10 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.style.display = 'none';
     });
 
+window.addEventListener("scroll", () => {
+  document.body.classList.toggle("scrolled", window.scrollX > 100);
+});
+    
 /* ====== Filter Available Paintings ====== */
 const filterLink = document.getElementById('filter-link');
 let showingAvailableOnly = false;
