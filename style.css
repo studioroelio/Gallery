@@ -119,15 +119,16 @@ body {
   font-family: sans-serif;
 }
 
-.modal-close { 
-  position: fixed; 
-  top: 20px; 
-  right: 30px; 
-  font-size: 40px; 
-  font-weight: bold; 
-  color: white; 
+.modal-close {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  color: white;
+  font-size: 32px;
+  font-weight: bold;
   cursor: pointer;
-} 
+  z-index: 3000; /* keep above everything */
+}
 
 
 /* ========== LOGO ========== */
