@@ -124,6 +124,7 @@ body {
   top: 20px; 
   left: 20px;
   z-index: 3000;
+  transition: opacity 0.3s ease;
 }
 
 .logo img {
@@ -131,6 +132,9 @@ body {
   width: auto; 
 }
 
+.scrolled .logo {
+  opacity: 0;
+}
 
 /* ========== HOVER INFO BOX ========== */
 .hover-info { 
