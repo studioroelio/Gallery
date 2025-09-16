@@ -58,8 +58,12 @@
 <!-- Modal for enlarged view -->
 <div class="modal" id="modal">
     <span class="modal-close" id="modal-close">&times;</span>
-    <img id="modal-img" src="" alt="Enlarged Painting">
+    <div class="modal-content">
+        <img id="modal-img" src="" alt="Enlarged Painting">
+        <p id="modal-info"></p>
+    </div>
 </div>
+
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
