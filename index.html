@@ -174,24 +174,27 @@ document.addEventListener('DOMContentLoaded', () => {
         gallery.scrollLeft = scrollLeft - walk;
     });
 
-    /* ====== Image Modal ====== */
-    const modal = document.getElementById('modal');
-    const modalImg = document.getElementById('modal-img');
-    const modalClose = document.getElementById('modal-close');
+/* ====== Image Modal ====== */
+const modal = document.getElementById('modal');
+const modalImg = document.getElementById('modal-img');
+const modalInfo = document.getElementById('modal-info');
+const modalClose = document.getElementById('modal-close');
 
-    document.querySelectorAll('.gallery img').forEach(img => {
-        img.addEventListener('click', () => {
-            if (!isTouchDevice()) {
-                modal.style.display = 'block';
-                modalImg.src = img.src;
-            }
-        });
+document.querySelectorAll('.gallery img').forEach(img => {
+    img.addEventListener('click', () => {
+        // Always open modal (both desktop + mobile)
+        modal.style.display = 'block';
+        modalImg.src = img.src;
+
+        // Add info text under image
+        const width = img.dataset.width;
+        const height = img.dataset.height;
+        const desc = img.alt || "Untitled";
+        modalInfo.textContent = `${desc} – ${width}cm × ${height}cm`;
     });
+});
 
-    modalClose.addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
-
+/* ====== Logo scroll dissapear ====== */
 window.addEventListener("scroll", () => {
   document.body.classList.toggle("scrolled", window.scrollX > 100);
 });
