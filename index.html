@@ -243,19 +243,18 @@ document.addEventListener('DOMContentLoaded', () => {
         imgs.forEach(img => {
           const status = (img.dataset.status || '').toLowerCase();
           if (status === 'available') {
-            // ensure visible before animating in
             img.style.display = 'inline-block';
             img.classList.remove('hidden');
           } else {
-            // animate out, then remove from layout
             img.classList.add('hidden');
             setTimeout(() => {
               if (img.classList.contains('hidden')) img.style.display = 'none';
-              // after layout removed, rescale visible images
-              scalePaintings();
             }, TRANS_MS);
           }
         });
+
+        filterLink.textContent = 'See all paintings';
+        showingAvailableOnly = true;
 
         filterLink.textContent = 'See all paintings';
         showingAvailableOnly = true;
@@ -271,7 +270,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         filterLink.textContent = 'See available paintings';
         showingAvailableOnly = false;
-        setTimeout(() => scalePaintings(), 60);
       }
     });
   }
