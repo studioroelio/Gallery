@@ -1,85 +1,194 @@
-/* ========== RESET & BASE STYLES ========== */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
-  background-color: #f5f5f0;
-  background-image: url('images/gallery-wall-floor.jpg'); /* your long jpeg */
-  background-repeat: repeat-x;       /* tile horizontally */
-  background-size: auto 6vh;        /* scale height to 85vh, keep proportions */
-  background-position: bottom center; /* anchor to bottom */
-  background-attachment: scroll;     /* make it move with the page */
-  overflow-x: hidden;                /* avoid double scrollbars */
-}
+/* ========== RESET & BASE STYLES ========== */ 
+body { 
+  margin: 0; 
+  padding: 0; 
+  font-family: sans-serif; 
+  background-color: #f5f5f0; 
+  background-image: url('images/gallery-wall-floor.jpg'); /* your long jpeg */ 
+  background-repeat: repeat-x; /* tile horizontally */ 
+  background-size: auto 6vh; /* scale height to 85vh, keep proportions */ 
+  background-position: bottom center; /* anchor to bottom */ 
+  background-attachment: scroll; /* make it move with the page */ 
+  overflow-x: hidden; /* avoid double scrollbars */ 
+} 
 
-/* ========== GALLERY CONTAINER ========== */
+/* ========== GALLERY CONTAINER ========== */ 
 .gallery { 
-  display: flex;
-  align-items: center;
-  height: 100vh;
-  gap: 40px;
-  cursor: grab;
-  position: relative;
-  padding-left: 40px;
-  padding-right: 40px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  white-space: nowrap;
-  -webkit-overflow-scrolling: touch;
-  transform: translateY(-4vh); /* pushes gallery up slightly */
-  transition: all 0.5s ease;   /* smooth reflow when items hide/show */
+  display: flex; 
+  align-items: center; 
+  height: 100vh; 
+  gap: 40px; 
+  cursor: grab; 
+  position: relative; 
+  padding-left: 40px; 
+  padding-right: 40px; 
+  overflow-x: auto; 
+  overflow-y: hidden; 
+  white-space: nowrap; 
+  -webkit-overflow-scrolling: touch; 
+  transform: translateY(-4vh);  /* pushes gallery up slightly */ 
 }
 
 .gallery:active { 
   cursor: grabbing; 
-}
+} 
 
-/* ========== INTRO TEXT BOX ========== */
+/* ========== INTRO TEXT BOX ========== */ 
 .intro-box { 
   flex: 0 0 220px; /* fixed width column */ 
-  font-size: 13px; 
-  line-height: 1.5; 
+  font-size: 13px; line-height: 1.5; 
   background-color: rgba(255, 255, 255, 0.0); 
-  padding: 10px; 
-  white-space: normal; /* allow text to wrap instead of manual <br> */
-}
+  padding: 10px; white-space: normal; /* allow text to wrap instead of manual <br> */ 
+} 
 
 .highlight { 
   color: rgba(0,0,255); 
   font-weight: bold; 
-}
+} 
 
-/* ========== CONTACT ICONS ========== */
-.contact-icons i { 
+/* ========== CONTACT ICONS ========== */ 
+.contact-icons i {
   font-size: 16px; 
   color: rgba(0,0,255); 
-  margin: 0 4px;
-  text-decoration: none;
-}
+  margin: 0 4px; 
+  text-decoration: none; 
+} 
 
-/* ========== PAINTINGS ========== */
+/* ========== PAINTINGS ========== */ 
 .gallery img { 
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); 
   border: 0px solid white; 
   object-fit: contain; 
+  transition: opacity 0.5s ease, transform 0.5s ease; 
   height: auto; 
-  max-height: 85vh; /* ensures images don’t exceed viewport */
-  
-  /* NEW: smooth transition for filter toggle */
-  transition: opacity 0.5s ease, transform 0.5s ease, margin 0.5s ease;
-  opacity: 1;
-  display: inline-block;
-}
+  max-height: 85vh; /* ensures images don’t exceed viewport */ 
+} 
 
-/* Fade + shrink for filter toggle */
+/* Fade + shrink for filter toggle */ 
 .gallery img.hidden {
-  opacity: 0;
-  transform: scale(0.9);
-  pointer-events: none; /* prevents interaction while hidden */
-  margin: 0;            /* collapse space smoothly */
+  opacity: 0; transform: scale(0.9); 
+  pointer-events: none; /* prevents interaction while hidden */ 
+} 
+
+/* Manual vertical staggering */ 
+.gallery img:nth-child(3) {
+  transform: translateY(-14vh); 
+} 
+
+.gallery img:nth-child(4) {
+  transform: translateY(-2vh);
+} 
+
+.gallery img:nth-child(5) { 
+  transform: translateY(-9vh); 
+} 
+
+.gallery img:nth-child(7) {
+  transform: translateY(-11vh); 
+  }
+
+/* ========== MODAL (ENLARGED IMAGE VIEW) ========== */ 
+.modal { 
+  display: none; 
+  position: fixed; 
+  z-index: 2000; 
+  left: 0; 
+  top: 0; 
+  width: 100%; 
+  height: 100%; 
+  background-color: rgba(0,0,255,1); 
+  text-align: center; 
+  overflow-y: auto; /* allow scroll if needed on small devices */ 
+  padding-top: 10vh; /* give space for logo */ 
+} 
+
+.modal-content { 
+  display: inline-block; 
+  max-width: 90%; 
+  margin: auto; 
+} 
+
+.modal img { 
+  max-width: 100%; 
+  max-height: 80vh; /* scaled for mobile */ 
+  height: auto; 
+} 
+
+.modal p { 
+  margin-top: 12px; 
+  font-size: 14px; 
+  color: white; 
+  font-family: sans-serif; 
+} 
+
+.modal-close { 
+  position: fixed; 
+  top: 20px; 
+  right: 20px; 
+  color: white; 
+  font-size: 32px; 
+  font-weight: bold; 
+  cursor: pointer; 
+  z-index: 3000; /* keep above everything */ 
+} 
+
+/* ========== LOGO ========== */ 
+.logo { 
+  position: fixed; 
+  top: 20px; 
+  left: 20px; 
+  z-index: 3000; 
+  transition: opacity 0.3s ease; 
+} 
+
+.logo img { 
+  height: 6vh; 
+  width: auto; 
+} 
+
+.scrolled .logo {
+  opacity: 0; 
+} 
+
+/* ========== HOVER INFO BOX ========== */ 
+.hover-info { 
+  position: fixed; 
+  bottom: 7vh; 
+  left: 50%; 
+  transform: translateX(-50%); 
+  background-color: rgba(0, 0, 255, 1.0); 
+  padding: 8px 14px; 
+  font-size: 12px; 
+  color: white; 
+  font-family: sans-serif; 
+  border-radius: 0px; 
+  display: none; 
+  pointer-events: none; 
+  z-index: 5000; 
+  opacity: 0; 
+  transition: opacity 0.5s ease; 
+} 
+
+.hover-info.show { 
+  display: block; 
+  opacity: 1; 
+} 
+
+.hover-info.hide {
+  opacity: 0; 
+} 
+
+/* ========== FILTER TOGGLE LINK ========== */ 
+.filter-toggle a {
+  color: rgba(0,0,255,1); 
+  text-decoration: none; 
+  cursor: pointer; 
+} 
+
+.filter-toggle a:visited {
+  color: rgba(0,0,255,1); /* removes purple visited state */ 
 }
 
-/* Manual vertical staggering */
-.gallery img:nth-child(3) { transform: translateY(-14vh); }
-.gallery img:nth-child(4) { transform: translateY(-2vh); } 
-.gallery img
+.filter-toggle a:hover { 
+  text-decoration: underline; /* underline only on hover */ 
+}
