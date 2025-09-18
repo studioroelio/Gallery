@@ -64,201 +64,192 @@
     </div>
 </div>
 
-
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+/* ====== Touch Detection ====== */
+function isTouchDevice() {
+  return (
+    'ontouchstart' in window ||
+    navigator.maxTouchPoints > 0 ||
+    navigator.msTouchPoints > 0
+  );
+}
 
-    /* ====== Detect touch devices (mobile/tablet) ====== */
-    function isTouchDevice() {
-        return (
-            'ontouchstart' in window ||
-            navigator.maxTouchPoints > 0 ||
-            navigator.msTouchPoints > 0
-        );
+/* ====== Modal Setup ====== */
+const modal = document.getElementById("myModal");
+const modalImg = document.getElementById("img01");
+const captionText = document.getElementById("caption");
+const logo = document.querySelector(".logo");
+const images = document.querySelectorAll(".gallery img");
+let infoBoxes = [];
+
+// Build info boxes for hover/tap
+images.forEach((img) => {
+  const info = document.createElement("div");
+  info.classList.add("info");
+  info.textContent = img.getAttribute("alt");
+  document.body.appendChild(info);
+  infoBoxes.push(info);
+
+  img.addEventListener("mouseenter", (e) => {
+    if (!isTouchDevice()) {
+      info.style.display = "block";
+      info.style.left = e.pageX + 15 + "px";
+      info.style.top = e.pageY + 15 + "px";
     }
-
-    /* ====== Scale Paintings ====== */
-    function scalePaintings() {
-        const paintings = document.querySelectorAll(".gallery img");
-        let maxHeight = 0;
-
-        paintings.forEach(img => {
-            const h = parseFloat(img.dataset.height);
-            if (!isNaN(h) && h > maxHeight) maxHeight = h;
-        });
-
-        const LARGEST_DISPLAY_HEIGHT = window.innerHeight * (isTouchDevice() ? 0.77 : 0.80);
-
-        if (maxHeight <= 0) {
-            paintings.forEach(img => img.style.height = LARGEST_DISPLAY_HEIGHT + 'px');
-            return;
-        }
-
-        paintings.forEach(img => {
-            const realHeight = parseFloat(img.dataset.height);
-            const scale = (!isNaN(realHeight) ? realHeight : maxHeight) / maxHeight;
-            img.style.height = (scale * LARGEST_DISPLAY_HEIGHT) + 'px';
-            img.style.width = 'auto';
-        });
+  });
+  img.addEventListener("mousemove", (e) => {
+    if (!isTouchDevice()) {
+      info.style.left = e.pageX + 15 + "px";
+      info.style.top = e.pageY + 15 + "px";
     }
-
-    scalePaintings();
-    window.addEventListener('resize', scalePaintings);
-
-    /* ====== Hover / Tap Info Box ====== */
-    const hoverInfo = document.getElementById('hover-info');
-    const paintings = document.querySelectorAll('.gallery img');
-
-    paintings.forEach(img => {
-        const width = img.dataset.width;
-        const height = img.dataset.height;
-        const desc = img.alt || "Untitled";
-        const infoText = `${desc} – ${width}cm × ${height}cm`;
-
-        img.addEventListener('mouseenter', () => {
-            if (!isTouchDevice()) {
-                hoverInfo.textContent = infoText;
-                hoverInfo.style.display = 'block';
-                hoverInfo.style.opacity = '1';
-            }
-        });
-        img.addEventListener('mouseleave', () => {
-            if (!isTouchDevice()) {
-                hoverInfo.style.display = 'none';
-            }
-        });
-
-        if (isTouchDevice()) {
-            img.addEventListener('click', () => {
-                hoverInfo.textContent = infoText;
-                hoverInfo.style.display = 'block';
-                hoverInfo.classList.add('show');
-                hoverInfo.classList.remove('hide');
-
-                clearTimeout(window.hoverInfoTimeout);
-                window.hoverInfoTimeout = setTimeout(() => {
-                    hoverInfo.classList.add('hide');
-                    hoverInfo.classList.remove('show');
-                    setTimeout(() => hoverInfo.style.display = 'none', 500);
-                }, 3000);
-            });
-        }
-    });
-
-    /* ====== Drag to Scroll ====== */
-    const gallery = document.querySelector('.gallery');
-    let isDown = false;
-    let startX, scrollLeft;
-
-    gallery.addEventListener('wheel', (e) => {
-        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-            e.preventDefault();
-            gallery.scrollLeft += e.deltaY;
-        }
-    }, { passive: false });
-
-    gallery.addEventListener('mousedown', (e) => {
-        isDown = true;
-        startX = e.pageX - gallery.offsetLeft;
-        scrollLeft = gallery.scrollLeft;
-    });
-
-    gallery.addEventListener('mouseleave', () => isDown = false);
-    gallery.addEventListener('mouseup', () => isDown = false);
-
-    gallery.addEventListener('mousemove', (e) => {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - gallery.offsetLeft;
-        const walk = (x - startX) * 2;
-        gallery.scrollLeft = scrollLeft - walk;
-    });
-
-/* ====== Image Modal ====== */
-/* ====== Image Modal ====== */
-const modal = document.getElementById('modal');
-const modalImg = document.getElementById('modal-img');
-const modalInfo = document.getElementById('modal-info');
-const modalClose = document.getElementById('modal-close');
-const hoverInfo = document.querySelector('.hover-info');
-
-document.querySelectorAll('.gallery img').forEach(img => {
-    img.addEventListener('click', () => {
-        // Open modal (both desktop + mobile)
-        modal.style.display = 'block';
-        modalImg.src = img.src;
-
-        // Add info text under image
-        const width = img.dataset.width;
-        const height = img.dataset.height;
-        const desc = img.alt || "Untitled";
-        modalInfo.textContent = `${desc} – ${width}cm × ${height}cm`;
-
-        // Hide the hover-info popup when modal is active
-        if (hoverInfo) hoverInfo.style.display = "none";
-    });
-});
-
-modalClose.addEventListener('click', () => {
-    modal.style.display = 'none';
-});
-
-// Also allow closing by tapping outside the image
-modal.addEventListener('click', (e) => {
-    if (e.target === modal) {
-        modal.style.display = 'none';
+  });
+  img.addEventListener("mouseleave", () => {
+    if (!isTouchDevice()) {
+      info.style.display = "none";
     }
-});
+  });
 
-
-/* ====== Logo scroll dissapear ====== */
-window.addEventListener("scroll", () => {
-  document.body.classList.toggle("scrolled", window.scrollX > 100);
-});
-    
-/* ====== Filter Available Paintings ====== */
-const filterLink = document.getElementById('filter-link');
-let showingAvailableOnly = false;
-
-filterLink.addEventListener('click', (e) => {
-    e.preventDefault();
-    const paintings = document.querySelectorAll('.gallery img');
-
-    if (!showingAvailableOnly) {
-        paintings.forEach(img => {
-            if (img.dataset.status === "available") {
-                // show available ones
-                img.style.display = "inline-block";
-                requestAnimationFrame(() => {
-                    img.classList.remove("hidden");
-                });
-            } else {
-                // fade out sold ones
-                img.classList.add("hidden");
-                setTimeout(() => {
-                    if (img.classList.contains("hidden")) {
-                        img.style.display = "none";
-                    }
-                }, 500); // match CSS transition duration
-            }
-        });
-        filterLink.textContent = "See all paintings";
-        showingAvailableOnly = true;
+  // Click handler for modal
+  img.addEventListener("click", () => {
+    if (isTouchDevice()) {
+      // Mobile/tablet: show modal with caption under image
+      modal.style.display = "flex";
+      modalImg.src = img.src;
+      captionText.textContent = img.getAttribute("alt");
+      captionText.style.display = "block";
+      logo.style.display = "block";
+      document.body.style.overflow = "hidden";
     } else {
-        paintings.forEach(img => {
-            // restore all
-            img.style.display = "inline-block";
-            requestAnimationFrame(() => {
-                img.classList.remove("hidden");
-            });
-        });
-        filterLink.textContent = "See available paintings";
-        showingAvailableOnly = false;
+      // Desktop: show modal with caption
+      modal.style.display = "flex";
+      modalImg.src = img.src;
+      captionText.textContent = img.getAttribute("alt");
+      logo.style.display = "block";
+      document.body.style.overflow = "hidden";
     }
+  });
 });
 
+// Close modal
+const closeBtn = document.querySelector(".close");
+closeBtn.onclick = function () {
+  modal.style.display = "none";
+  captionText.textContent = "";
+  document.body.style.overflow = "auto";
+};
+
+// Click outside image closes modal
+modal.addEventListener("click", (e) => {
+  if (e.target === modal) {
+    modal.style.display = "none";
+    captionText.textContent = "";
+    document.body.style.overflow = "auto";
+  }
+});
+
+/* ====== Robust Scale Paintings ====== */
+function scalePaintings() {
+  const imgs = Array.from(document.querySelectorAll(".gallery img"));
+  if (!imgs.length) return;
+
+  const cmHeights = imgs.map((img) => {
+    const v = parseFloat(img.dataset.height);
+    return Number.isFinite(v) ? v : null;
+  });
+
+  const validCmHeights = cmHeights.filter((h) => h !== null);
+  const usingCm = validCmHeights.length > 0;
+
+  const maxDisplayVH = isTouchDevice() ? 0.77 : 0.8;
+  const LARGEST_DISPLAY_HEIGHT_PX = Math.round(window.innerHeight * maxDisplayVH);
+
+  if (usingCm) {
+    const maxCm = Math.max(...validCmHeights);
+    const cmToPx = maxCm > 0 ? LARGEST_DISPLAY_HEIGHT_PX / maxCm : 1;
+
+    imgs.forEach((img, i) => {
+      const realCm = cmHeights[i];
+      const effectiveCm = realCm !== null ? realCm : maxCm;
+      img.style.height = Math.round(effectiveCm * cmToPx) + "px";
+      img.style.width = "auto";
+    });
+  } else {
+    const naturalHeights = imgs.map((img) => img.naturalHeight || 0);
+    const maxNatural = Math.max(...naturalHeights);
+
+    if (maxNatural <= 0) {
+      setTimeout(scalePaintings, 80);
+      return;
+    }
+
+    imgs.forEach((img, i) => {
+      const ratio = naturalHeights[i] / maxNatural;
+      const h = Math.max(24, Math.round(ratio * LARGEST_DISPLAY_HEIGHT_PX));
+      img.style.height = h + "px";
+      img.style.width = "auto";
+    });
+  }
+}
+
+function whenGalleryImagesReady(cb) {
+  const imgs = Array.from(document.querySelectorAll(".gallery img"));
+  if (!imgs.length) { cb(); return; }
+
+  let remaining = imgs.length;
+  function checkDone() { if (--remaining <= 0) cb(); }
+
+  imgs.forEach((img) => {
+    if (img.complete && img.naturalHeight !== 0) {
+      checkDone();
+    } else {
+      img.addEventListener("load", checkDone);
+      img.addEventListener("error", checkDone);
+    }
+  });
+}
+
+// Debounced resize
+let __resizeTimer;
+window.addEventListener("resize", () => {
+  clearTimeout(__resizeTimer);
+  __resizeTimer = setTimeout(scalePaintings, 120);
+});
+whenGalleryImagesReady(scalePaintings);
+
+/* ====== Filter Function ====== */
+const filterToggle = document.createElement("span");
+filterToggle.className = "filter-toggle";
+filterToggle.textContent = "See which paintings are still available";
+document.querySelector(".intro-box").appendChild(filterToggle);
+
+let filterActive = false;
+
+filterToggle.addEventListener("click", () => {
+  const imgs = document.querySelectorAll(".gallery img");
+  filterActive = !filterActive;
+
+  imgs.forEach((img) => {
+    const isAvailable = img.dataset.available === "true";
+    if (filterActive && !isAvailable) {
+      img.classList.add("fade-out");
+      setTimeout(() => {
+        img.style.display = "none";
+        img.classList.remove("fade-out");
+      }, 300);
+    } else {
+      img.style.display = "";
+      img.classList.add("fade-in");
+      setTimeout(() => img.classList.remove("fade-in"), 300);
+    }
+  });
+
+  filterToggle.textContent = filterActive
+    ? "See all paintings"
+    : "See which paintings are still available";
 });
 </script>
+
+
 
 <!-- Hover Info Box -->
 <div class="hover-info" id="hover-info"></div>    
