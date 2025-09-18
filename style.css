@@ -55,37 +55,33 @@ body {
 } 
 
 /* ========== PAINTINGS ========== */ 
-.gallery img { 
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); 
-  border: 0px solid white; 
-  object-fit: contain; 
-  transition: opacity 0.5s ease, transform 0.5s ease; 
-  height: auto; 
-  max-height: 85vh; /* ensures images don’t exceed viewport */ 
-} 
+.gallery img {
+  --ty: 0;
+  --s: 1;
+  transform: translateY(var(--ty)) scale(var(--s));
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  border: 0 solid white;
+  object-fit: contain;
+  transition: opacity 0.45s ease, transform 0.45s ease, margin 0.45s ease;
+  height: auto;
+  max-height: 85vh;
+  opacity: 1;
+  display: inline-block;
+}
 
-/* Fade + shrink for filter toggle */ 
+/* When hidden: reduce scale (keeps translateY) and fade */
 .gallery img.hidden {
-  opacity: 0; transform: scale(0.9); 
-  pointer-events: none; /* prevents interaction while hidden */ 
-} 
+  --s: 0.92;            /* slight shrink while preserving translateY */
+  opacity: 0;
+  pointer-events: none; /* avoid interaction while hidden */
+  margin: 0;            /* collapse spacing smoothly */
+}
 
 /* Manual vertical staggering */ 
-.gallery img:nth-child(3) {
-  transform: translateY(-14vh); 
-} 
-
-.gallery img:nth-child(4) {
-  transform: translateY(-2vh);
-} 
-
-.gallery img:nth-child(5) { 
-  transform: translateY(-9vh); 
-} 
-
-.gallery img:nth-child(7) {
-  transform: translateY(-11vh); 
-  }
+.gallery img:nth-child(3) { --ty: -14vh; }
+.gallery img:nth-child(4) { --ty: -2vh; }
+.gallery img:nth-child(5) { --ty: -9vh; }
+.gallery img:nth-child(7) { --ty: -11vh; }
 
 /* ========== MODAL (ENLARGED IMAGE VIEW) ========== */ 
 .modal { 
