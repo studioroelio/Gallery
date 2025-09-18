@@ -65,187 +65,227 @@
 </div>
 
 <script>
-/* ====== Touch Detection ====== */
-function isTouchDevice() {
-  return (
-    'ontouchstart' in window ||
-    navigator.maxTouchPoints > 0 ||
-    navigator.msTouchPoints > 0
-  );
-}
+document.addEventListener('DOMContentLoaded', () => {
 
-/* ====== Modal Setup ====== */
-const modal = document.getElementById("myModal");
-const modalImg = document.getElementById("img01");
-const captionText = document.getElementById("caption");
-const logo = document.querySelector(".logo");
-const images = document.querySelectorAll(".gallery img");
-let infoBoxes = [];
-
-// Build info boxes for hover/tap
-images.forEach((img) => {
-  const info = document.createElement("div");
-  info.classList.add("info");
-  info.textContent = img.getAttribute("alt");
-  document.body.appendChild(info);
-  infoBoxes.push(info);
-
-  img.addEventListener("mouseenter", (e) => {
-    if (!isTouchDevice()) {
-      info.style.display = "block";
-      info.style.left = e.pageX + 15 + "px";
-      info.style.top = e.pageY + 15 + "px";
-    }
-  });
-  img.addEventListener("mousemove", (e) => {
-    if (!isTouchDevice()) {
-      info.style.left = e.pageX + 15 + "px";
-      info.style.top = e.pageY + 15 + "px";
-    }
-  });
-  img.addEventListener("mouseleave", () => {
-    if (!isTouchDevice()) {
-      info.style.display = "none";
-    }
-  });
-
-  // Click handler for modal
-  img.addEventListener("click", () => {
-    if (isTouchDevice()) {
-      // Mobile/tablet: show modal with caption under image
-      modal.style.display = "flex";
-      modalImg.src = img.src;
-      captionText.textContent = img.getAttribute("alt");
-      captionText.style.display = "block";
-      logo.style.display = "block";
-      document.body.style.overflow = "hidden";
-    } else {
-      // Desktop: show modal with caption
-      modal.style.display = "flex";
-      modalImg.src = img.src;
-      captionText.textContent = img.getAttribute("alt");
-      logo.style.display = "block";
-      document.body.style.overflow = "hidden";
-    }
-  });
-});
-
-// Close modal
-const closeBtn = document.querySelector(".close");
-closeBtn.onclick = function () {
-  modal.style.display = "none";
-  captionText.textContent = "";
-  document.body.style.overflow = "auto";
-};
-
-// Click outside image closes modal
-modal.addEventListener("click", (e) => {
-  if (e.target === modal) {
-    modal.style.display = "none";
-    captionText.textContent = "";
-    document.body.style.overflow = "auto";
+  /* ====== Helpers ====== */
+  function isTouchDevice() {
+    return (
+      'ontouchstart' in window ||
+      navigator.maxTouchPoints > 0 ||
+      navigator.msTouchPoints > 0
+    );
   }
-});
 
-/* ====== Robust Scale Paintings ====== */
-function scalePaintings() {
-  const imgs = Array.from(document.querySelectorAll(".gallery img"));
-  if (!imgs.length) return;
+  function debounce(fn, time = 100) {
+    let t;
+    return (...args) => {
+      clearTimeout(t);
+      t = setTimeout(() => fn(...args), time);
+    };
+  }
 
-  const cmHeights = imgs.map((img) => {
-    const v = parseFloat(img.dataset.height);
-    return Number.isFinite(v) ? v : null;
-  });
+  const gallery = document.querySelector('.gallery');
+  const hoverInfo = document.getElementById('hover-info');
+  const modal = document.getElementById('modal');
+  const modalImg = document.getElementById('modal-img');
+  const modalInfo = document.getElementById('modal-info');
+  const modalClose = document.getElementById('modal-close');
+  const filterLink = document.getElementById('filter-link');
 
-  const validCmHeights = cmHeights.filter((h) => h !== null);
-  const usingCm = validCmHeights.length > 0;
+  /* ====== Robust scalePaintings() that only uses visible images unless passed a list ====== */
+  function scalePaintings(imgsArg) {
+    // Use provided list, otherwise use visible images (not display:none)
+    const allImgs = imgsArg || Array.from(document.querySelectorAll('.gallery img'))
+                                    .filter(i => i.offsetParent !== null);
+    if (!allImgs.length) return;
 
-  const maxDisplayVH = isTouchDevice() ? 0.77 : 0.8;
-  const LARGEST_DISPLAY_HEIGHT_PX = Math.round(window.innerHeight * maxDisplayVH);
-
-  if (usingCm) {
-    const maxCm = Math.max(...validCmHeights);
-    const cmToPx = maxCm > 0 ? LARGEST_DISPLAY_HEIGHT_PX / maxCm : 1;
-
-    imgs.forEach((img, i) => {
-      const realCm = cmHeights[i];
-      const effectiveCm = realCm !== null ? realCm : maxCm;
-      img.style.height = Math.round(effectiveCm * cmToPx) + "px";
-      img.style.width = "auto";
+    // collect numeric data-height if present
+    const cmHeights = allImgs.map(img => {
+      const v = parseFloat(img.dataset.height);
+      return Number.isFinite(v) ? v : null;
     });
-  } else {
-    const naturalHeights = imgs.map((img) => img.naturalHeight || 0);
-    const maxNatural = Math.max(...naturalHeights);
 
-    if (maxNatural <= 0) {
-      setTimeout(scalePaintings, 80);
-      return;
+    const validCmHeights = cmHeights.filter(h => h !== null);
+    const usingCm = validCmHeights.length > 0;
+
+    const maxDisplayVH = isTouchDevice() ? 0.80 : 0.85; // mobile 80vh, desktop 85vh
+    const LARGEST_DISPLAY_HEIGHT_PX = Math.round(window.innerHeight * maxDisplayVH);
+
+    if (usingCm) {
+      const maxCm = Math.max(...validCmHeights);
+      const cmToPx = maxCm > 0 ? (LARGEST_DISPLAY_HEIGHT_PX / maxCm) : 1;
+
+      allImgs.forEach((img, i) => {
+        const realCm = cmHeights[i];
+        const effectiveCm = (realCm !== null) ? realCm : maxCm;
+        img.style.height = Math.round(effectiveCm * cmToPx) + 'px';
+        img.style.width = 'auto';
+      });
+    } else {
+      // fallback: use intrinsic heights relative to the tallest intrinsic image
+      const naturalHeights = allImgs.map(img => img.naturalHeight || 0);
+      const maxNatural = Math.max(...naturalHeights);
+      if (maxNatural <= 0) {
+        // images not fully loaded — try again shortly
+        setTimeout(() => scalePaintings(imgsArg), 80);
+        return;
+      }
+      allImgs.forEach((img, i) => {
+        const ratio = naturalHeights[i] / maxNatural;
+        const h = Math.max(24, Math.round(ratio * LARGEST_DISPLAY_HEIGHT_PX));
+        img.style.height = h + 'px';
+        img.style.width = 'auto';
+      });
     }
+  }
 
-    imgs.forEach((img, i) => {
-      const ratio = naturalHeights[i] / maxNatural;
-      const h = Math.max(24, Math.round(ratio * LARGEST_DISPLAY_HEIGHT_PX));
-      img.style.height = h + "px";
-      img.style.width = "auto";
+  function whenGalleryImagesReady(cb) {
+    const imgs = Array.from(document.querySelectorAll('.gallery img'));
+    if (!imgs.length) { cb(); return; }
+    let remaining = imgs.length;
+    function done() { if (--remaining <= 0) cb(); }
+    imgs.forEach(img => {
+      if (img.complete && img.naturalHeight !== 0) {
+        done();
+      } else {
+        img.addEventListener('load', done);
+        img.addEventListener('error', done);
+      }
     });
   }
-}
 
-function whenGalleryImagesReady(cb) {
-  const imgs = Array.from(document.querySelectorAll(".gallery img"));
-  if (!imgs.length) { cb(); return; }
+  /* ====== Hover info (desktop only) ====== */
+  if (!isTouchDevice() && hoverInfo) {
+    document.querySelectorAll('.gallery img').forEach(img => {
+      const width = img.dataset.width;
+      const height = img.dataset.height;
+      const desc = img.alt || 'Untitled';
+      const infoText = `${desc} – ${width || '–'}cm × ${height || '–'}cm`;
 
-  let remaining = imgs.length;
-  function checkDone() { if (--remaining <= 0) cb(); }
+      img.addEventListener('mouseenter', () => {
+        hoverInfo.textContent = infoText;
+        hoverInfo.style.display = 'block';
+        hoverInfo.classList.add('show');
+        hoverInfo.classList.remove('hide');
+      });
+      img.addEventListener('mouseleave', () => {
+        hoverInfo.classList.remove('show');
+        hoverInfo.classList.add('hide');
+        setTimeout(() => { hoverInfo.style.display = 'none'; }, 500);
+      });
+    });
+  }
 
-  imgs.forEach((img) => {
-    if (img.complete && img.naturalHeight !== 0) {
-      checkDone();
-    } else {
-      img.addEventListener("load", checkDone);
-      img.addEventListener("error", checkDone);
-    }
-  });
-}
+  /* ====== Modal (desktop + mobile) ====== */
+  function openModalForImage(img) {
+    modal.style.display = 'block';
+    modalImg.src = img.src;
+    const w = img.dataset.width;
+    const h = img.dataset.height;
+    const desc = img.alt || 'Untitled';
+    modalInfo.textContent = `${desc} – ${w || '–'}cm × ${h || '–'}cm`;
 
-// Debounced resize
-let __resizeTimer;
-window.addEventListener("resize", () => {
-  clearTimeout(__resizeTimer);
-  __resizeTimer = setTimeout(scalePaintings, 120);
-});
-whenGalleryImagesReady(scalePaintings);
+    // make sure hover-info is hidden (prevent duplicates)
+    if (hoverInfo) { hoverInfo.style.display = 'none'; hoverInfo.classList.remove('show'); hoverInfo.classList.add('hide'); }
+    document.body.style.overflow = 'hidden';
+  }
 
-/* ====== Filter Function ====== */
-const filterToggle = document.createElement("span");
-filterToggle.className = "filter-toggle";
-filterToggle.textContent = "See which paintings are still available";
-document.querySelector(".intro-box").appendChild(filterToggle);
-
-let filterActive = false;
-
-filterToggle.addEventListener("click", () => {
-  const imgs = document.querySelectorAll(".gallery img");
-  filterActive = !filterActive;
-
-  imgs.forEach((img) => {
-    const isAvailable = img.dataset.available === "true";
-    if (filterActive && !isAvailable) {
-      img.classList.add("fade-out");
-      setTimeout(() => {
-        img.style.display = "none";
-        img.classList.remove("fade-out");
-      }, 300);
-    } else {
-      img.style.display = "";
-      img.classList.add("fade-in");
-      setTimeout(() => img.classList.remove("fade-in"), 300);
-    }
+  document.querySelectorAll('.gallery img').forEach(img => {
+    img.addEventListener('click', () => openModalForImage(img));
   });
 
-  filterToggle.textContent = filterActive
-    ? "See all paintings"
-    : "See which paintings are still available";
+  function closeModal() {
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+  }
+
+  if (modalClose) modalClose.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  /* ====== Drag-to-scroll (mouse drag) ====== */
+  let isDown = false, startX = 0, scrollLeft = 0;
+  gallery.addEventListener('mousedown', (e) => {
+    isDown = true;
+    gallery.classList.add('active');
+    startX = e.pageX - gallery.offsetLeft;
+    scrollLeft = gallery.scrollLeft;
+  });
+  gallery.addEventListener('mouseleave', () => { isDown = false; gallery.classList.remove('active'); });
+  gallery.addEventListener('mouseup', () => { isDown = false; gallery.classList.remove('active'); });
+  gallery.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - gallery.offsetLeft;
+    const walk = (x - startX) * 2;
+    gallery.scrollLeft = scrollLeft - walk;
+  });
+  // wheel -> horizontal
+  gallery.addEventListener('wheel', (e) => {
+    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+      e.preventDefault();
+      gallery.scrollLeft += e.deltaY;
+    }
+  }, { passive: false });
+
+  /* ====== Filter Available Paintings (smooth fade + collapse) ====== */
+  let showingAvailableOnly = false;
+  const TRANS_MS = 450; // match CSS transition duration
+
+  if (filterLink) {
+    filterLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      const imgs = Array.from(document.querySelectorAll('.gallery img'));
+
+      if (!showingAvailableOnly) {
+        // hide sold (non-available)
+        imgs.forEach(img => {
+          const status = (img.dataset.status || '').toLowerCase();
+          if (status === 'available') {
+            // ensure visible before animating in
+            img.style.display = 'inline-block';
+            img.classList.remove('hidden');
+          } else {
+            // animate out, then remove from layout
+            img.classList.add('hidden');
+            setTimeout(() => {
+              if (img.classList.contains('hidden')) img.style.display = 'none';
+              // after layout removed, rescale visible images
+              scalePaintings();
+            }, TRANS_MS);
+          }
+        });
+
+        filterLink.textContent = 'See all paintings';
+        showingAvailableOnly = true;
+
+        // also scale after short delay to react to new layout
+        setTimeout(() => scalePaintings(), TRANS_MS + 40);
+      } else {
+        // show all again
+        imgs.forEach(img => {
+          img.style.display = 'inline-block';
+          // allow CSS to pick up display then remove hidden class
+          requestAnimationFrame(() => img.classList.remove('hidden'));
+        });
+        filterLink.textContent = 'See available paintings';
+        showingAvailableOnly = false;
+        setTimeout(() => scalePaintings(), 60);
+      }
+    });
+  }
+
+  /* ====== Image-size bootstrap ====== */
+  whenGalleryImagesReady(() => {
+    // initial scale based on visible images
+    scalePaintings();
+    // ensure gallery scroll position stable
+    gallery.scrollLeft = 0;
+  });
+
+  // responsive
+  window.addEventListener('resize', debounce(() => scalePaintings(), 120));
 });
 </script>
 
