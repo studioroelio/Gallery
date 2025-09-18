@@ -139,7 +139,8 @@ body {
 
 .logo img { 
   height: 6vh; 
-  width: auto; 
+  width: auto;
+  max-height: 10vh; 
 } 
 
 .scrolled .logo {
@@ -148,6 +149,7 @@ body {
 
 /* ========== HOVER INFO BOX ========== */ 
 .hover-info { 
+  display: none;
   position: fixed; 
   bottom: 7vh; 
   left: 50%; 
