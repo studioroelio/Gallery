@@ -108,7 +108,7 @@ body {
 
 .modal img { 
   max-width: 100%; 
-  max-height: 80vh; /* scaled for mobile */ 
+  max-height: 70vh; /* scaled for mobile */ 
   height: auto; 
 } 
 
