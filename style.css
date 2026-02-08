@@ -85,7 +85,7 @@ body {
 .gallery img:nth-child(7) { --ty: -3vh; }
 .gallery img:nth-child(8) { --ty: -1vh; }
 .gallery img:nth-child(9) { --ty: -6vh; }
-.gallery img:nth-child(11) { --ty: -3vh; }
+.gallery img:nth-child(11) { --ty: -8vh; }
 .gallery img:nth-child(12) { --ty: -7vh; }
 
 /* ========== MODAL (ENLARGED IMAGE VIEW) ========== */ 
