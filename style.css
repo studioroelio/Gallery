@@ -78,15 +78,15 @@ body {
 }
 
 /* Manual vertical staggering */ 
-.gallery img:nth-child(3) { --ty: -4vh; }
+.gallery img:nth-child(2) { --ty: -4vh; }
 .gallery img:nth-child(4) { --ty: -5vh; }
 .gallery img:nth-child(5) { --ty: -2vh; }
 .gallery img:nth-child(6) { --ty: -3vh; }
 .gallery img:nth-child(7) { --ty: -3vh; }
 .gallery img:nth-child(8) { --ty: -1vh; }
 .gallery img:nth-child(9) { --ty: -6vh; }
-.gallery img:nth-child(11) { --ty: -8vh; }
-.gallery img:nth-child(12) { --ty: -7vh; }
+.gallery img:nth-child(12) { --ty: -8vh; }
+.gallery img:nth-child(13) { --ty: -7vh; }
 
 /* ========== MODAL (ENLARGED IMAGE VIEW) ========== */ 
 .modal { 
