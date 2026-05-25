@@ -78,7 +78,7 @@ body {
 }
 
 /* Manual vertical staggering */ 
-.gallery img:nth-child(2) { --ty: -4vh; }
+.gallery img:nth-child(2) { --ty: -6vh; }
 .gallery img:nth-child(4) { --ty: -5vh; }
 .gallery img:nth-child(5) { --ty: -2vh; }
 .gallery img:nth-child(6) { --ty: -3vh; }
